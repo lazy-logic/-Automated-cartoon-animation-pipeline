@@ -37,3 +37,7 @@ next-env.d.ts
 
 # Vercel
 .vercel
+
+# Development notes
+TODO.md
+NOTES.md
