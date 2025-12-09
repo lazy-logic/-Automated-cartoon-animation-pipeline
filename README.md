@@ -2,6 +2,14 @@
 
 A web-based application that enables users to create short animated cartoon stories with minimal manual effort. The system uses artificial intelligence to generate stories, characters, and scenes, producing children-style animations similar to popular shows like Dora the Explorer or Peppa Pig. No prior animation experience, sprite design skills, or frame-by-frame animation knowledge is required.
 
+## Screenshots
+
+### Landing Page
+![Landing Page](./public/landing-page.png)
+
+### Creator Canvas
+![Creator Canvas](./public/creator-canvas.png)
+
 ---
 
 ## Table of Contents
