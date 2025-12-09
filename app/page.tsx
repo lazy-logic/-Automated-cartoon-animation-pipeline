@@ -1028,53 +1028,77 @@ export default function HomePage() {
     : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col">
       {/* Animated Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-pink-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-500" />
+        <div className="absolute top-0 left-1/4 w-72 h-72 bg-purple-500/15 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-pink-500/15 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-1/2 left-1/2 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-500" />
       </div>
 
-      {/* Header */}
-      <header className="relative z-10 border-b border-white/10 bg-black/20 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+      {/* Header - Compact */}
+      <header className="relative z-10 border-b border-white/10 bg-black/30 backdrop-blur-xl flex-shrink-0">
+        <div className="max-w-[1600px] mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
-            {/* Logo */}
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-500/30">
-                <Film className="w-6 h-6 text-white" />
+            {/* Logo - Compact */}
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/30">
+                <Film className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-white">Cartoon Studio</h1>
-                <p className="text-sm text-purple-300">Create magical animated stories</p>
+                <h1 className="text-lg font-bold text-white leading-tight">Cartoon Studio</h1>
+                <p className="text-xs text-purple-300/80">AI Animation</p>
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="flex items-center gap-3">
-              {/* Keyboard Shortcuts */}
+            {/* Center: Generation Tools - Prominent */}
+            <div className="flex items-center gap-2">
+              {/* Primary: Create Story */}
               <button
-                onClick={() => setShowKeyboardShortcuts(true)}
-                className="p-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all border border-white/10"
-                title="Keyboard Shortcuts (?)"
+                onClick={() => setShowStoryGenerator(true)}
+                data-tour="create-story"
+                className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-purple-500/30 font-medium text-sm"
               >
-                <Keyboard className="w-4 h-4" />
+                <Wand2 className="w-4 h-4" />
+                <span>Create Story</span>
               </button>
               
-              {/* Settings */}
+              {/* Secondary: Character Creator */}
               <button
-                onClick={() => setShowSettings(true)}
-                className="p-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all border border-white/10"
-                title="Settings"
+                onClick={() => setShowCharacterCreator(true)}
+                className="px-3 py-2 bg-gradient-to-r from-cyan-500/80 to-blue-500/80 hover:from-cyan-500 hover:to-blue-500 text-white rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-cyan-500/20 font-medium text-sm"
+                title="Create AI Character"
               >
-                <Settings className="w-4 h-4" />
+                <Sparkles className="w-4 h-4" />
+                <span className="hidden lg:inline">Character</span>
               </button>
               
-              {/* TTS Settings Button */}
+              {/* Story Starters */}
+              <button
+                onClick={() => setShowStoryStarters(true)}
+                title="Story starters & prompts"
+                className="px-3 py-2 bg-gradient-to-r from-amber-500/80 to-orange-500/80 hover:from-amber-500 hover:to-orange-500 text-white rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-amber-500/20 font-medium text-sm"
+              >
+                <LayoutTemplate className="w-4 h-4" />
+                <span className="hidden lg:inline">Templates</span>
+              </button>
+            </div>
+
+            {/* Right: Utility buttons */}
+            <div className="flex items-center gap-1.5">
+              {/* Music Player Toggle */}
+              <button
+                onClick={() => setShowMusicPlayer(!showMusicPlayer)}
+                title="Background music"
+                className={`p-2 rounded-lg transition-all ${showMusicPlayer ? 'bg-purple-500 text-white' : 'bg-white/10 hover:bg-white/20 text-white/70 hover:text-white'}`}
+              >
+                <Music className="w-4 h-4" />
+              </button>
+              
+              {/* TTS Settings */}
               <button
                 onClick={() => setShowTTSSettings(true)}
-                className="p-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all border border-white/10"
+                className="p-2 bg-white/10 hover:bg-white/20 text-white/70 hover:text-white rounded-lg transition-all"
                 title="Voice Settings"
               >
                 <Mic className="w-4 h-4" />
@@ -1087,166 +1111,141 @@ export default function HomePage() {
                 isCompact={true}
               />
               
-              {/* Collaboration */}
+              {/* Keyboard Shortcuts */}
               <button
-                onClick={() => setShowCollaboration(!showCollaboration)}
-                className={`p-2.5 rounded-xl transition-all border ${
-                  showCollaboration 
-                    ? 'bg-purple-500 text-white border-purple-500' 
-                    : 'bg-white/10 hover:bg-white/20 text-white border-white/10'
-                }`}
-                title="Collaboration"
+                onClick={() => setShowKeyboardShortcuts(true)}
+                className="p-2 bg-white/10 hover:bg-white/20 text-white/70 hover:text-white rounded-lg transition-all"
+                title="Keyboard Shortcuts (?)"
               >
-                <Users className="w-4 h-4" />
+                <Keyboard className="w-4 h-4" />
               </button>
               
-              {/* Character Creator */}
+              {/* Settings */}
               <button
-                onClick={() => setShowCharacterCreator(true)}
-                className="p-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all border border-white/10"
-                title="Character Creator"
+                onClick={() => setShowSettings(true)}
+                className="p-2 bg-white/10 hover:bg-white/20 text-white/70 hover:text-white rounded-lg transition-all"
+                title="Settings"
               >
-                <Sparkles className="w-4 h-4" />
+                <Settings className="w-4 h-4" />
               </button>
               
-              {hasProject && (
-                <>
-                  {/* Share Button */}
-                  <button
-                    onClick={handleGenerateShareLink}
-                    className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all flex items-center gap-2 border border-white/10"
-                    title="Share Project"
-                  >
-                    <Share2 className="w-4 h-4" />
-                    <span className="hidden sm:inline">Share</span>
-                  </button>
-                  <button
-                    onClick={() => setShowVideoExporter(true)}
-                    className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all flex items-center gap-2 border border-white/10"
-                  >
-                    <Download className="w-4 h-4" />
-                    <span className="hidden sm:inline">Export</span>
-                  </button>
-                  <button
-                    onClick={handleSaveProject}
-                    disabled={isSavingProject}
-                    className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all flex items-center gap-2 border border-white/10 disabled:opacity-60 disabled:cursor-not-allowed"
-                  >
-                    {isSavingProject ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                    <span className="hidden sm:inline">{isSavingProject ? 'Saving...' : 'Save'}</span>
-                  </button>
-                  <button
-                    onClick={() => setShowLoadDialog(true)}
-                    className="px-4 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all flex items-center gap-2 border border-white/10"
-                  >
-                    <FolderOpen className="w-4 h-4" />
-                    <span className="hidden sm:inline">Load</span>
-                  </button>
-                </>
-              )}
-              <button
-                onClick={() => setShowStoryGenerator(true)}
-                data-tour="create-story"
-                className="px-5 py-2.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-purple-500/30 font-medium"
-              >
-                <Wand2 className="w-4 h-4" />
-                <span>Create Story</span>
-              </button>
-              <button
-                onClick={() => setShowStoryStarters(true)}
-                title="Story starters & prompts"
-                className="p-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all"
-              >
-                <Sparkles className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => setShowMusicPlayer(!showMusicPlayer)}
-                title="Background music"
-                className={`p-2.5 rounded-xl transition-all ${showMusicPlayer ? 'bg-purple-500 text-white' : 'bg-white/10 hover:bg-white/20 text-white'}`}
-              >
-                <Music className="w-5 h-5" />
-              </button>
+              {/* Help */}
               <button
                 onClick={() => setShowOnboarding(true)}
                 title="Show tour guide"
-                className="p-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all"
+                className="p-2 bg-white/10 hover:bg-white/20 text-white/70 hover:text-white rounded-lg transition-all"
               >
-                <HelpCircle className="w-5 h-5" />
+                <HelpCircle className="w-4 h-4" />
               </button>
+
+              {/* Divider */}
+              <div className="w-px h-6 bg-white/20 mx-1" />
+              
+              {hasProject && (
+                <>
+                  {/* Share */}
+                  <button
+                    onClick={handleGenerateShareLink}
+                    className="p-2 bg-white/10 hover:bg-white/20 text-white/70 hover:text-white rounded-lg transition-all"
+                    title="Share Project"
+                  >
+                    <Share2 className="w-4 h-4" />
+                  </button>
+                  {/* Export */}
+                  <button
+                    onClick={() => setShowVideoExporter(true)}
+                    className="p-2 bg-white/10 hover:bg-white/20 text-white/70 hover:text-white rounded-lg transition-all"
+                    title="Export Video"
+                  >
+                    <Download className="w-4 h-4" />
+                  </button>
+                  {/* Save */}
+                  <button
+                    onClick={handleSaveProject}
+                    disabled={isSavingProject}
+                    className="p-2 bg-white/10 hover:bg-white/20 text-white/70 hover:text-white rounded-lg transition-all disabled:opacity-60"
+                    title="Save Project"
+                  >
+                    {isSavingProject ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                  </button>
+                  {/* Load */}
+                  <button
+                    onClick={() => setShowLoadDialog(true)}
+                    className="p-2 bg-white/10 hover:bg-white/20 text-white/70 hover:text-white rounded-lg transition-all"
+                    title="Load Project"
+                  >
+                    <FolderOpen className="w-4 h-4" />
+                  </button>
+                </>
+              )}
             </div>
           </div>
-          {saveError && (
-            <p className="mt-2 text-sm text-red-200">Save failed: {saveError}</p>
-          )}
-          {lastAutoSaved && !saveError && (
-            <p className="mt-2 text-xs text-white/50">Auto-saved at {lastAutoSaved.toLocaleTimeString()}</p>
-          )}
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="relative z-10 max-w-7xl mx-auto px-6 py-8">
+      {/* Main Content - Fills remaining space */}
+      <main className="relative z-10 flex-1 overflow-hidden">
+        <div className="h-full max-w-[1600px] mx-auto px-4 py-3">
         {!hasProject ? (
-          /* Welcome Screen */
-          <div className="flex flex-col items-center justify-center min-h-[70vh] text-center">
+          /* Welcome Screen - Compact */
+          <div className="flex flex-col items-center justify-center h-full text-center">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="max-w-2xl"
+              className="max-w-xl"
             >
               {/* Hero Icon */}
-              <div className="w-32 h-32 mx-auto mb-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-3xl flex items-center justify-center shadow-2xl shadow-purple-500/30">
-                <Sparkles className="w-16 h-16 text-white" />
+              <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-2xl shadow-purple-500/30">
+                <Sparkles className="w-12 h-12 text-white" />
               </div>
 
-              <h2 className="text-5xl font-bold text-white mb-4">
+              <h2 className="text-4xl font-bold text-white mb-3">
                 Create Your Own
                 <span className="block bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                   Animated Story
                 </span>
               </h2>
               
-              <p className="text-xl text-gray-300 mb-10 max-w-lg mx-auto">
-                Turn your imagination into beautiful cartoon animations in just a few clicks. No design skills needed!
+              <p className="text-lg text-gray-300 mb-8 max-w-md mx-auto">
+                Turn your imagination into beautiful cartoon animations in just a few clicks.
               </p>
 
               <button
                 onClick={() => setShowStoryGenerator(true)}
                 data-tour="create-story"
-                className="px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-lg rounded-2xl transition-all flex items-center gap-3 mx-auto shadow-xl shadow-purple-500/30 font-semibold"
+                className="px-7 py-3.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white text-lg rounded-xl transition-all flex items-center gap-3 mx-auto shadow-xl shadow-purple-500/30 font-semibold"
               >
-                <Wand2 className="w-6 h-6" />
+                <Wand2 className="w-5 h-5" />
                 Start Creating
                 <ChevronRight className="w-5 h-5" />
               </button>
 
-              {/* Features */}
-              <div className="grid grid-cols-3 gap-6 mt-16">
+              {/* Features - Compact */}
+              <div className="grid grid-cols-3 gap-4 mt-10">
                 {[
-                  { icon: Users, title: 'Cute Characters', desc: 'Pre-made animated characters' },
-                  { icon: Mic, title: 'Auto Narration', desc: 'Voice-over for your story' },
-                  { icon: Download, title: 'Easy Export', desc: 'Download as video' },
+                  { icon: Users, title: 'Characters', desc: 'Pre-made & AI' },
+                  { icon: Mic, title: 'Narration', desc: 'Auto voice-over' },
+                  { icon: Download, title: 'Export', desc: 'Video download' },
                 ].map((feature, i) => (
-                  <div key={i} className="p-6 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10">
-                    <feature.icon className="w-8 h-8 text-purple-400 mb-3" />
-                    <h3 className="font-semibold text-white mb-1">{feature.title}</h3>
-                    <p className="text-sm text-gray-400">{feature.desc}</p>
+                  <div key={i} className="p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
+                    <feature.icon className="w-6 h-6 text-purple-400 mb-2 mx-auto" />
+                    <h3 className="font-medium text-white text-sm mb-0.5">{feature.title}</h3>
+                    <p className="text-xs text-gray-400">{feature.desc}</p>
                   </div>
                 ))}
               </div>
             </motion.div>
           </div>
         ) : (
-          /* Project View */
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Main Preview */}
-            <div className="lg:col-span-2 space-y-4">
-              {/* Project Title */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
+          /* Project View - Compact Grid */
+          <div className="grid grid-cols-12 gap-4 h-full">
+            {/* Main Preview - Takes 9 columns */}
+            <div className="col-span-12 lg:col-span-9 flex flex-col h-full overflow-hidden">
+              {/* Project Title Bar */}
+              <div className="flex items-center justify-between mb-2 flex-shrink-0">
+                <div className="flex items-center gap-3">
                   {coverImage && (
-                    <div className="w-12 h-12 rounded-xl overflow-hidden border border-white/10 bg-black/40">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <div className="w-10 h-10 rounded-lg overflow-hidden border border-white/10 bg-black/40 flex-shrink-0">
                       <img
                         src={coverImage}
                         alt="Story cover"
@@ -1255,39 +1254,37 @@ export default function HomePage() {
                     </div>
                   )}
                   <div>
-                    <h2 className="text-2xl font-bold text-white">{projectTitle}</h2>
-                    <p className="text-purple-300">{editableScenes.length} scenes • {Math.round(totalDuration / 1000)}s duration</p>
+                    <h2 className="text-lg font-bold text-white leading-tight">{projectTitle}</h2>
+                    <p className="text-xs text-purple-300">{editableScenes.length} scenes • {Math.round(totalDuration / 1000)}s</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setShowPlaybackViewer(true)}
-                  className="px-5 py-2.5 bg-green-500 hover:bg-green-600 text-white rounded-xl transition-all flex items-center gap-2 font-medium shadow-lg"
+                  className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-all flex items-center gap-2 font-medium text-sm shadow-lg"
                 >
                   <Play className="w-4 h-4" />
                   Watch Full Story
                 </button>
               </div>
 
-              {/* Preview Stage */}
+              {/* Preview Stage - Flexible height */}
               <div 
                 data-tour="canvas"
-                className="relative bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 rounded-3xl overflow-hidden shadow-2xl border border-white/10"
+                className="relative bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950 rounded-xl overflow-hidden shadow-xl border border-white/10 flex-1 min-h-0"
               >
                 {/* Stage Header */}
-                <div className="absolute top-0 left-0 right-0 z-20 p-4 bg-gradient-to-b from-black/60 via-black/30 to-transparent">
+                <div className="absolute top-0 left-0 right-0 z-20 p-3 bg-gradient-to-b from-black/60 via-black/30 to-transparent">
                   <div className="flex items-center justify-between">
-                    <div className="px-4 py-2 bg-black/40 backdrop-blur-md rounded-xl border border-white/10">
-                      <p className="text-white font-medium text-sm">{currentScene?.title || 'No scene'}</p>
+                    <div className="px-3 py-1.5 bg-black/40 backdrop-blur-md rounded-lg border border-white/10">
+                      <p className="text-white font-medium text-xs">{currentScene?.title || 'No scene'}</p>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="px-3 py-1.5 bg-purple-500/30 backdrop-blur-md rounded-lg text-purple-200 text-xs font-medium border border-purple-500/30">
-                        Scene {currentSceneIndex + 1}/{editableScenes.length}
-                      </span>
-                    </div>
+                    <span className="px-2.5 py-1 bg-purple-500/30 backdrop-blur-md rounded-md text-purple-200 text-xs font-medium border border-purple-500/30">
+                      {currentSceneIndex + 1}/{editableScenes.length}
+                    </span>
                   </div>
                 </div>
 
-                <div className="aspect-video relative">
+                <div className="w-full h-full relative">
                   {currentScene && (
                     <>
                       {/* Check if using AI-generated custom background */}
@@ -1324,7 +1321,7 @@ export default function HomePage() {
                       )}
 
                       {/* Characters - positioned on the ground, in front of backgrounds */}
-                      <div className="absolute inset-0 flex items-end justify-center pb-[12%] gap-8 z-30">
+                      <div className="absolute inset-0 flex items-end justify-center pb-[15%] gap-6 z-30">
                         {currentScene.characters.map((char, idx) => {
                           const rig = getCharacterRig(char.rigId);
                           const label = characterRoleLabels[rig?.id.toLowerCase() || ''];
@@ -1335,17 +1332,16 @@ export default function HomePage() {
                               <div
                                 key={idx}
                                 className="transform relative"
-                                style={{ transform: `scale(${char.scale * 0.7})` }}
+                                style={{ transform: `scale(${char.scale * 0.6})` }}
                               >
-                                <div className="w-32 h-40 relative">
+                                <div className="w-28 h-36 relative">
                                   <img 
                                     src={char.aiGeneratedImage} 
                                     alt={char.name}
                                     className="w-full h-full object-contain drop-shadow-lg"
                                   />
-                                  {/* Character name label */}
-                                  <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap">
-                                    <span className="px-3 py-1 bg-black/70 backdrop-blur-sm rounded-full text-white text-sm font-medium">
+                                  <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap">
+                                    <span className="px-2 py-0.5 bg-black/70 backdrop-blur-sm rounded-full text-white text-xs font-medium">
                                       {label || char.name}
                                     </span>
                                   </div>
@@ -1356,14 +1352,11 @@ export default function HomePage() {
                           
                           if (!rig) return null;
                           return (
-                            <div
-                              key={idx}
-                              className="transform"
-                            >
+                            <div key={idx} className="transform">
                               <RiggedCharacter
                                 rig={rig}
                                 animation={isPlaying ? char.animation : 'idle'}
-                                scale={char.scale * 0.7}
+                                scale={char.scale * 0.6}
                                 flipX={char.flipX}
                                 expression={char.expression}
                                 showName={true}
@@ -1376,166 +1369,106 @@ export default function HomePage() {
                         })}
                       </div>
 
-                      {/* Narration Box */}
-                      <div className="absolute bottom-20 left-4 right-4">
-                        <div className="px-6 py-4 bg-black/70 backdrop-blur-md rounded-2xl border border-white/10 shadow-xl">
-                          <p className="text-white text-center leading-relaxed text-base">{currentScene.narration}</p>
+                      {/* Narration Box - More compact */}
+                      <div className="absolute bottom-14 left-3 right-3 z-40">
+                        <div className="px-4 py-2.5 bg-black/70 backdrop-blur-md rounded-xl border border-white/10 shadow-lg">
+                          <p className="text-white text-center leading-relaxed text-sm">{currentScene.narration}</p>
                         </div>
                       </div>
                     </>
                   )}
                 </div>
 
-                {/* Playback Controls */}
-                <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/90 via-black/70 to-transparent">
+                {/* Playback Controls - Compact */}
+                <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/90 via-black/70 to-transparent z-50">
                   <div className="flex items-center justify-between">
-                    {/* Mute button */}
                     <button
                       onClick={() => {
                         setIsMuted(!isMuted);
                         if (!isMuted) window.speechSynthesis?.cancel();
                       }}
-                      className="p-2.5 text-white hover:bg-white/20 rounded-xl transition-colors backdrop-blur-sm bg-white/10"
+                      className="p-2 text-white hover:bg-white/20 rounded-lg transition-colors backdrop-blur-sm bg-white/10"
                     >
-                      {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                      {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                     </button>
 
-                    {/* Playback controls */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1.5">
                       <button
                         onClick={() => setCurrentSceneIndex(Math.max(0, currentSceneIndex - 1))}
                         disabled={currentSceneIndex === 0}
-                        className="p-2.5 text-white hover:bg-white/20 rounded-xl transition-colors disabled:opacity-30 backdrop-blur-sm bg-white/10"
+                        className="p-2 text-white hover:bg-white/20 rounded-lg transition-colors disabled:opacity-30 backdrop-blur-sm bg-white/10"
                       >
-                        <SkipBack className="w-5 h-5" />
+                        <SkipBack className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => setIsPlaying(!isPlaying)}
-                        className="p-4 bg-gradient-to-r from-purple-500 to-fuchsia-500 text-white rounded-2xl hover:opacity-90 transition-all shadow-lg shadow-purple-500/30"
+                        className="p-3 bg-gradient-to-r from-purple-500 to-fuchsia-500 text-white rounded-xl hover:opacity-90 transition-all shadow-lg shadow-purple-500/30"
                       >
-                        {isPlaying ? <Pause className="w-6 h-6" /> : <Play className="w-6 h-6 ml-0.5" />}
+                        {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
                       </button>
                       <button
                         onClick={() => setCurrentSceneIndex(Math.min(editableScenes.length - 1, currentSceneIndex + 1))}
                         disabled={currentSceneIndex === editableScenes.length - 1}
-                        className="p-2.5 text-white hover:bg-white/20 rounded-xl transition-colors disabled:opacity-30 backdrop-blur-sm bg-white/10"
+                        className="p-2 text-white hover:bg-white/20 rounded-lg transition-colors disabled:opacity-30 backdrop-blur-sm bg-white/10"
                       >
-                        <SkipForward className="w-5 h-5" />
+                        <SkipForward className="w-4 h-4" />
                       </button>
                     </div>
 
-                    {/* Full screen button */}
                     <button
                       onClick={() => setShowPlaybackViewer(true)}
-                      className="p-2.5 text-white hover:bg-white/20 rounded-xl transition-colors backdrop-blur-sm bg-white/10"
+                      className="p-2 text-white hover:bg-white/20 rounded-lg transition-colors backdrop-blur-sm bg-white/10"
                       title="Full screen preview"
                     >
-                      <Maximize2 className="w-5 h-5" />
+                      <Maximize2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
               </div>
 
-              {/* Scene Timeline */}
-              <div data-tour="timeline" className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-5 border border-white/10">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <h3 className="font-semibold text-white text-lg">Scenes</h3>
-                    <span className="px-2.5 py-1 bg-purple-500/20 text-purple-300 rounded-lg text-sm font-medium">
-                      {currentSceneIndex + 1} / {editableScenes.length}
+              {/* Scene Timeline - Compact */}
+              <div data-tour="timeline" className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl p-3 border border-white/10 mt-2 flex-shrink-0">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-medium text-white text-sm">Scenes</h3>
+                    <span className="px-2 py-0.5 bg-purple-500/20 text-purple-300 rounded text-xs font-medium">
+                      {currentSceneIndex + 1}/{editableScenes.length}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 flex-wrap">
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     {editableScenes.length > 0 && (
                       <>
                         <button
                           onClick={handleContinueStory}
                           disabled={isContinuingStory}
-                          className="px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:opacity-90 disabled:opacity-50 text-white shadow-lg shadow-emerald-500/20 transition-all"
-                          title="Add more scenes to continue the story"
+                          className="px-2.5 py-1.5 rounded-md text-xs font-medium flex items-center gap-1 bg-gradient-to-r from-emerald-500 to-teal-500 hover:opacity-90 disabled:opacity-50 text-white shadow shadow-emerald-500/20 transition-all"
+                          title="Add more scenes"
                         >
-                          <PlusCircle className="w-3.5 h-3.5" />
-                          {isContinuingStory ? 'Adding...' : 'Continue Story'}
+                          <PlusCircle className="w-3 h-3" />
+                          {isContinuingStory ? '...' : 'Continue'}
                         </button>
                         <button
                           onClick={() => handleRegenerateScene(currentSceneIndex)}
                           disabled={isRegeneratingScene}
-                          className="px-3 py-2 rounded-lg text-xs font-medium flex items-center gap-1.5 bg-gradient-to-r from-purple-500 to-fuchsia-500 hover:opacity-90 disabled:opacity-50 text-white shadow-lg shadow-purple-500/20 transition-all"
+                          className="px-2.5 py-1.5 rounded-md text-xs font-medium flex items-center gap-1 bg-gradient-to-r from-purple-500 to-fuchsia-500 hover:opacity-90 disabled:opacity-50 text-white shadow shadow-purple-500/20 transition-all"
                         >
-                          <Sparkles className="w-3.5 h-3.5" />
-                          {isRegeneratingScene ? 'Working...' : 'Regenerate'}
-                        </button>
-                        <button
-                          onClick={() => handlePolishSceneDialogue(currentSceneIndex)}
-                          disabled={isRegeneratingScene}
-                          className="px-3 py-2 rounded-lg text-xs font-medium bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-all"
-                        >
-                          ✨ Improve
-                        </button>
-                        <button
-                          onClick={() => handleRefineSceneMood(currentSceneIndex, 'calmer')}
-                          disabled={isRegeneratingScene}
-                          className="px-3 py-2 rounded-lg text-xs font-medium bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-all"
-                        >
-                          😌 Calmer
-                        </button>
-                        <button
-                          onClick={() => handleRefineSceneMood(currentSceneIndex, 'more-exciting')}
-                          disabled={isRegeneratingScene}
-                          className="px-3 py-2 rounded-lg text-xs font-medium bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-all"
-                        >
-                          🔥 Exciting
-                        </button>
-                        <button
-                          onClick={async () => {
-                            if (!editableScenes[currentSceneIndex]) return;
-                            try {
-                              const currentScene = editableScenes[currentSceneIndex];
-                              const bgSuggestion = suggestBackgrounds(
-                                currentScene.narration
-                              );
-                              if (bgSuggestion && bgSuggestion.length > 0) {
-                                const newScenes = [...editableScenes];
-                                newScenes[currentSceneIndex] = {
-                                  ...currentScene,
-                                  background: bgSuggestion[0].name,
-                                };
-                                setEditableScenes(newScenes);
-                              }
-                            } catch (err) {
-                              console.error('Background suggestion failed:', err);
-                            }
-                          }}
-                          disabled={isRegeneratingScene}
-                          className="px-3 py-2 rounded-lg text-xs font-medium bg-blue-500/20 hover:bg-blue-500/30 text-blue-300 hover:text-blue-200 transition-all"
-                          title="Switch to preset background"
-                        >
-                          🎨 Preset BG
+                          <Sparkles className="w-3 h-3" />
+                          {isRegeneratingScene ? '...' : 'Regen'}
                         </button>
                         <button
                           onClick={handleAutoGenerateBackground}
                           disabled={isGeneratingBackground}
-                          className="px-3 py-2 rounded-lg text-xs font-medium bg-gradient-to-r from-indigo-500/30 to-purple-500/30 hover:from-indigo-500/50 hover:to-purple-500/50 text-indigo-300 hover:text-indigo-200 transition-all flex items-center gap-1"
-                          title="Auto-generate AI background from storyline"
+                          className="px-2.5 py-1.5 rounded-md text-xs font-medium bg-gradient-to-r from-indigo-500/50 to-purple-500/50 hover:from-indigo-500/70 hover:to-purple-500/70 text-indigo-200 transition-all flex items-center gap-1"
+                          title="AI Background"
                         >
-                          {isGeneratingBackground ? (
-                            <>⏳ Generating...</>
-                          ) : (
-                            <>🤖 AI Background</>
-                          )}
-                        </button>
-                        <button
-                          onClick={() => setShowAIBackgroundModal(true)}
-                          className="px-3 py-2 rounded-lg text-xs font-medium bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition-all"
-                          title="Custom AI background with prompt"
-                        >
-                          ✏️ Custom BG
+                          <FileImage className="w-3 h-3" />
+                          {isGeneratingBackground ? '...' : 'AI BG'}
                         </button>
                       </>
                     )}
                   </div>
                 </div>
-                <div className="flex gap-4 overflow-x-auto pb-3 pt-8 px-2 scrollbar-thin scrollbar-thumb-white/10">
+                <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin scrollbar-thumb-white/10">
                   {editableScenes.map((scene, index) => (
                     <div
                       key={scene.id}
@@ -1543,217 +1476,151 @@ export default function HomePage() {
                       onDragStart={() => handleSceneDragStart(index)}
                       onDragOver={(e) => handleSceneDragOver(e, index)}
                       onDragEnd={handleSceneDragEnd}
-                      className={`relative flex-shrink-0 group ${
-                        draggedSceneIndex === index ? 'opacity-50' : ''
-                      }`}
+                      className={`relative flex-shrink-0 group ${draggedSceneIndex === index ? 'opacity-50' : ''}`}
                     >
                       <button
                         onClick={() => setCurrentSceneIndex(index)}
-                        className={`p-4 rounded-xl transition-all ${
+                        className={`px-3 py-2 rounded-lg transition-all text-left ${
                           currentSceneIndex === index
                             ? 'bg-gradient-to-br from-purple-500 to-fuchsia-500 text-white shadow-lg shadow-purple-500/30'
                             : 'bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10'
                         }`}
                       >
-                        <div className="flex items-center gap-3">
-                          <GripVertical className="w-4 h-4 opacity-40 cursor-grab" />
-                          <div className="w-24 text-left">
-                            <div className={`text-xs font-medium ${currentSceneIndex === index ? 'text-white/80' : 'text-gray-500'}`}>
+                        <div className="flex items-center gap-2">
+                          <GripVertical className="w-3 h-3 opacity-40 cursor-grab" />
+                          <div className="min-w-[70px]">
+                            <div className={`text-[10px] font-medium ${currentSceneIndex === index ? 'text-white/80' : 'text-gray-500'}`}>
                               Scene {index + 1}
                             </div>
-                            <div className="font-semibold truncate mt-0.5">{scene.title}</div>
+                            <div className="text-xs font-semibold truncate max-w-[80px]">{scene.title}</div>
                           </div>
                         </div>
                       </button>
                       
-                      {/* Scene action buttons */}
-                      <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                      {/* Scene actions on hover */}
+                      <div className="absolute -top-1.5 -right-1.5 opacity-0 group-hover:opacity-100 transition-opacity flex gap-0.5">
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            duplicateScene(index);
-                          }}
-                          className="p-1 bg-blue-500 hover:bg-blue-600 rounded-full shadow-lg"
-                          title="Duplicate scene"
+                          onClick={(e) => { e.stopPropagation(); duplicateScene(index); }}
+                          className="p-0.5 bg-blue-500 hover:bg-blue-600 rounded-full shadow"
+                          title="Duplicate"
                         >
-                          <Copy className="w-3 h-3 text-white" />
+                          <Copy className="w-2.5 h-2.5 text-white" />
                         </button>
                         {editableScenes.length > 1 && (
                           <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setShowDeleteConfirm(index);
-                            }}
-                            className="p-1 bg-red-500 hover:bg-red-600 rounded-full shadow-lg"
-                            title="Delete scene"
+                            onClick={(e) => { e.stopPropagation(); setShowDeleteConfirm(index); }}
+                            className="p-0.5 bg-red-500 hover:bg-red-600 rounded-full shadow"
+                            title="Delete"
                           >
-                            <Trash2 className="w-3 h-3 text-white" />
+                            <Trash2 className="w-2.5 h-2.5 text-white" />
                           </button>
                         )}
                       </div>
-                      
-                      {/* Transition indicator / picker */}
-                      {index < editableScenes.length - 1 && (
-                        <div className="absolute -right-3 top-1/2 -translate-y-1/2 z-10">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              // Cycle through transition types
-                              const currentTransition = sceneTransitions[scene.id];
-                              const transitionTypes = ['fade', 'slide-left', 'zoom-in', 'wipe-left', 'dissolve', 'blur', 'flip', 'none'] as const;
-                              const currentIndex = currentTransition 
-                                ? transitionTypes.indexOf(currentTransition.type as any)
-                                : -1;
-                              const nextIndex = (currentIndex + 1) % transitionTypes.length;
-                              const nextType = transitionTypes[nextIndex];
-                              
-                              if (nextType === 'none') {
-                                // Remove transition
-                                const newTransitions = { ...sceneTransitions };
-                                delete newTransitions[scene.id];
-                                setSceneTransitions(newTransitions);
-                              } else {
-                                updateSceneTransition(scene.id, {
-                                  type: nextType,
-                                  duration: 500,
-                                  easing: 'ease-in-out',
-                                });
-                              }
-                            }}
-                            className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] transition-all ${
-                              sceneTransitions[scene.id]
-                                ? 'bg-purple-500 hover:bg-purple-600 text-white'
-                                : 'bg-white/10 hover:bg-white/20 text-gray-400'
-                            }`}
-                            title={sceneTransitions[scene.id] 
-                              ? `Transition: ${TRANSITION_PRESETS.find(t => t.id === sceneTransitions[scene.id]?.type)?.name || 'Custom'} (click to change)`
-                              : 'Add transition (click)'
-                            }
-                          >
-                            {sceneTransitions[scene.id] 
-                              ? (TRANSITION_PRESETS.find(t => t.id === sceneTransitions[scene.id]?.type)?.icon || '✨')
-                              : '+'
-                            }
-                          </button>
-                        </div>
-                      )}
                     </div>
                   ))}
                   {/* Add Scene Button */}
                   <button
                     onClick={() => setShowAddSceneModal(true)}
-                    className="flex-shrink-0 p-4 rounded-xl transition-all bg-gradient-to-br from-white/5 to-white/10 hover:from-purple-500/20 hover:to-fuchsia-500/20 text-gray-400 hover:text-white border-2 border-dashed border-white/20 hover:border-purple-500/50 group"
+                    className="flex-shrink-0 px-3 py-2 rounded-lg transition-all bg-white/5 hover:bg-purple-500/20 text-gray-400 hover:text-white border border-dashed border-white/20 hover:border-purple-500/50"
                   >
-                    <div className="w-28 flex flex-col items-center justify-center h-full">
-                      <Plus className="w-6 h-6 mb-1.5 group-hover:scale-110 transition-transform" />
-                      <div className="text-sm font-medium">Add Scene</div>
+                    <div className="flex items-center gap-1.5">
+                      <Plus className="w-4 h-4" />
+                      <span className="text-xs font-medium">Add</span>
                     </div>
                   </button>
                 </div>
-                {regenError && (
-                  <div className="mt-3 p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
-                    <p className="text-sm text-red-300">{regenError}</p>
-                  </div>
-                )}
               </div>
             </div>
 
-            {/* Sidebar */}
-            <div className="space-y-5">
-              {/* Quick Actions */}
-              <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-                <h3 className="font-semibold text-white mb-5 text-lg">Quick Actions</h3>
-                <div className="space-y-3">
+            {/* Sidebar - Takes 3 columns */}
+            <div className="col-span-12 lg:col-span-3 flex flex-col gap-3 overflow-y-auto max-h-full">
+              {/* Quick Actions - Compact */}
+              <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                <h3 className="font-medium text-white mb-3 text-sm">Quick Actions</h3>
+                <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={() => setShowPlaybackViewer(true)}
-                    className="w-full px-5 py-3.5 bg-gradient-to-r from-green-500/20 to-emerald-500/20 hover:from-green-500/30 hover:to-emerald-500/30 text-green-400 rounded-xl transition-all flex items-center gap-3 border border-green-500/30 group"
+                    className="px-3 py-2.5 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg transition-all flex items-center gap-2 border border-green-500/30 text-xs font-medium"
                   >
-                    <div className="p-2 bg-green-500/20 rounded-lg group-hover:scale-110 transition-transform">
-                      <Play className="w-4 h-4" />
-                    </div>
-                    <span className="font-medium">Watch Animation</span>
+                    <Play className="w-3.5 h-3.5" />
+                    <span>Watch</span>
                   </button>
                   <button
                     onClick={() => setShowVideoExporter(true)}
                     data-tour="export"
-                    className="w-full px-5 py-3.5 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 hover:from-blue-500/30 hover:to-cyan-500/30 text-blue-400 rounded-xl transition-all flex items-center gap-3 border border-blue-500/30 group"
+                    className="px-3 py-2.5 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded-lg transition-all flex items-center gap-2 border border-blue-500/30 text-xs font-medium"
                   >
-                    <div className="p-2 bg-blue-500/20 rounded-lg group-hover:scale-110 transition-transform">
-                      <Download className="w-4 h-4" />
-                    </div>
-                    <span className="font-medium">Export Video</span>
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Export</span>
                   </button>
                   <button
                     onClick={() => setShowStoryGenerator(true)}
-                    className="w-full px-5 py-3.5 bg-gradient-to-r from-purple-500/20 to-fuchsia-500/20 hover:from-purple-500/30 hover:to-fuchsia-500/30 text-purple-400 rounded-xl transition-all flex items-center gap-3 border border-purple-500/30 group"
+                    className="px-3 py-2.5 bg-purple-500/20 hover:bg-purple-500/30 text-purple-400 rounded-lg transition-all flex items-center gap-2 border border-purple-500/30 text-xs font-medium"
                   >
-                    <div className="p-2 bg-purple-500/20 rounded-lg group-hover:scale-110 transition-transform">
-                      <Plus className="w-4 h-4" />
-                    </div>
-                    <span className="font-medium">New Story</span>
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>New</span>
+                  </button>
+                  <button
+                    onClick={() => setShowCharacterCreator(true)}
+                    className="px-3 py-2.5 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded-lg transition-all flex items-center gap-2 border border-cyan-500/30 text-xs font-medium"
+                  >
+                    <Sparkles className="w-3.5 h-3.5" />
+                    <span>Char</span>
                   </button>
                 </div>
               </div>
 
-              {/* Project Info */}
-              <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-                <h3 className="font-semibold text-white mb-5 text-lg">Project Info</h3>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center py-3 border-b border-white/5">
-                    <span className="text-gray-400">Scenes</span>
-                    <span className="font-bold text-white text-lg">{editableScenes.length}</span>
+              {/* Project Info - Compact */}
+              <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                <h3 className="font-medium text-white mb-3 text-sm">Project Info</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="text-center p-2 bg-white/5 rounded-lg">
+                    <span className="text-lg font-bold text-white">{editableScenes.length}</span>
+                    <p className="text-[10px] text-gray-400">Scenes</p>
                   </div>
-                  <div className="flex justify-between items-center py-3 border-b border-white/5">
-                    <span className="text-gray-400">Duration</span>
-                    <span className="font-bold text-white text-lg">{Math.round(totalDuration / 1000)}s</span>
+                  <div className="text-center p-2 bg-white/5 rounded-lg">
+                    <span className="text-lg font-bold text-white">{Math.round(totalDuration / 1000)}s</span>
+                    <p className="text-[10px] text-gray-400">Duration</p>
                   </div>
-                  {storySourceLabel && (
-                    <div className="flex justify-between items-center py-3 border-b border-white/5">
-                      <span className="text-gray-400">Source</span>
-                      <span className="px-2 py-1 bg-purple-500/20 text-purple-300 rounded-lg text-xs font-medium">{storySourceLabel}</span>
-                    </div>
-                  )}
-                  <div className="flex justify-between items-center py-3">
-                    <span className="text-gray-400">Characters</span>
-                    <span className="font-bold text-white text-lg">
+                  <div className="text-center p-2 bg-white/5 rounded-lg">
+                    <span className="text-lg font-bold text-white">
                       {new Set(editableScenes.flatMap(s => s.characters.map(c => c.name))).size}
                     </span>
+                    <p className="text-[10px] text-gray-400">Characters</p>
                   </div>
+                  {storySourceLabel && (
+                    <div className="text-center p-2 bg-purple-500/10 rounded-lg">
+                      <span className="text-xs font-medium text-purple-300">{storySourceLabel.split(' ')[0]}</span>
+                      <p className="text-[10px] text-gray-400">Source</p>
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* Characters Preview */}
-              <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-white/10">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-semibold text-white text-lg">Characters</h3>
+              {/* Characters Preview - Compact */}
+              <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-xl p-4 border border-white/10">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-medium text-white text-sm">Characters</h3>
                   {hasCharacterRoleLabels && (
-                    <span className="px-2 py-1 bg-purple-500/20 text-purple-300 rounded-lg text-xs">AI Tagged</span>
+                    <span className="px-1.5 py-0.5 bg-purple-500/20 text-purple-300 rounded text-[10px]">AI</span>
                   )}
                 </div>
-                <div className="grid grid-cols-3 gap-3">
-                  {rigsToShow.map((rig) => {
+                <div className="grid grid-cols-4 gap-2">
+                  {rigsToShow.slice(0, 8).map((rig) => {
                     const idKey = rig.id.toLowerCase();
                     const label = characterRoleLabels[idKey] || rig.name;
-                    const desc = characterRoleDescriptions[idKey];
                     return (
                       <div key={rig.id} className="text-center">
                         <div 
-                          className="w-16 h-16 mx-auto rounded-xl flex items-center justify-center text-3xl mb-2"
+                          className="w-10 h-10 mx-auto rounded-lg flex items-center justify-center mb-1"
                           style={{ backgroundColor: rig.colors.primary + '30' }}
                         >
                           <div 
-                            className="w-8 h-8 rounded-full"
+                            className="w-5 h-5 rounded-full"
                             style={{ backgroundColor: rig.colors.primary }}
                           />
                         </div>
-                        <p className="text-xs text-gray-300">
-                          {label}
-                        </p>
-                        {desc && (
-                          <p className="text-[10px] text-gray-400 mt-0.5">
-                            {desc}
-                          </p>
-                        )}
+                        <p className="text-[9px] text-gray-300 truncate">{label}</p>
                       </div>
                     );
                   })}
@@ -1762,6 +1629,7 @@ export default function HomePage() {
             </div>
           </div>
         )}
+        </div>
       </main>
 
       {/* Story Generator Modal */}
@@ -1783,6 +1651,7 @@ export default function HomePage() {
             onEditScene={handleEditScene}
             autoPlay={true}
             characterRoleLabels={characterRoleLabels}
+            customBackgrounds={customBackgrounds}
           />
         )}
       </AnimatePresence>

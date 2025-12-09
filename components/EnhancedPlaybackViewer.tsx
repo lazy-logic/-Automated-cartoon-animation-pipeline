@@ -65,9 +65,10 @@ interface EnhancedPlaybackViewerProps {
   onEditScene?: (sceneIndex: number) => void;
   autoPlay?: boolean;
   characterRoleLabels?: Record<string, string>;
+  customBackgrounds?: Record<string, string>; // Map of background ID to URL
 }
 
-// Background configurations
+// Background configurations with fallback colors
 const BACKGROUNDS: Record<string, { gradient: string; groundColor: string; elements: string }> = {
   meadow: {
     gradient: 'linear-gradient(180deg, #87CEEB 0%, #ADD8E6 40%, #90EE90 100%)',
@@ -99,6 +100,63 @@ const BACKGROUNDS: Record<string, { gradient: string; groundColor: string; eleme
     groundColor: '#7CFC00',
     elements: 'nature',
   },
+  castle: {
+    gradient: 'linear-gradient(180deg, #4A5568 0%, #2D3748 50%, #1A202C 100%)',
+    groundColor: '#4A5568',
+    elements: 'indoor',
+  },
+  space: {
+    gradient: 'linear-gradient(180deg, #0B0B1A 0%, #1A1A3E 50%, #0B0B1A 100%)',
+    groundColor: '#1A1A3E',
+    elements: 'night',
+  },
+  underwater: {
+    gradient: 'linear-gradient(180deg, #006994 0%, #004466 50%, #002233 100%)',
+    groundColor: '#002233',
+    elements: 'beach',
+  },
+  mountain: {
+    gradient: 'linear-gradient(180deg, #87CEEB 0%, #B8D4E3 40%, #8B9DC3 70%, #6B8E23 100%)',
+    groundColor: '#6B8E23',
+    elements: 'nature',
+  },
+  city: {
+    gradient: 'linear-gradient(180deg, #87CEEB 0%, #B0C4DE 50%, #708090 100%)',
+    groundColor: '#696969',
+    elements: 'indoor',
+  },
+  farm: {
+    gradient: 'linear-gradient(180deg, #87CEEB 0%, #ADD8E6 40%, #90EE90 100%)',
+    groundColor: '#8B4513',
+    elements: 'nature',
+  },
+  playground: {
+    gradient: 'linear-gradient(180deg, #87CEEB 0%, #ADD8E6 50%, #98FB98 100%)',
+    groundColor: '#DEB887',
+    elements: 'nature',
+  },
+  library: {
+    gradient: 'linear-gradient(180deg, #D2B48C 0%, #BC8F8F 50%, #A0522D 100%)',
+    groundColor: '#8B4513',
+    elements: 'indoor',
+  },
+  kitchen: {
+    gradient: 'linear-gradient(180deg, #FFFAF0 0%, #FFF5EE 50%, #FFE4C4 100%)',
+    groundColor: '#D2691E',
+    elements: 'indoor',
+  },
+  garden: {
+    gradient: 'linear-gradient(180deg, #87CEEB 0%, #98FB98 50%, #228B22 100%)',
+    groundColor: '#228B22',
+    elements: 'nature',
+  },
+};
+
+// Default/fallback background for unknown backgrounds
+const DEFAULT_BACKGROUND = {
+  gradient: 'linear-gradient(180deg, #87CEEB 0%, #ADD8E6 40%, #90EE90 100%)',
+  groundColor: '#7CFC00',
+  elements: 'nature',
 };
 
 type SceneIntensity = 'calm' | 'normal' | 'intense';
@@ -123,6 +181,7 @@ export default function EnhancedPlaybackViewer({
   onEditScene,
   autoPlay = true,
   characterRoleLabels,
+  customBackgrounds = {},
 }: EnhancedPlaybackViewerProps) {
   const [currentSceneIndex, setCurrentSceneIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(autoPlay);
@@ -159,7 +218,11 @@ export default function EnhancedPlaybackViewer({
 
   const safeSceneIndex = Math.min(currentSceneIndex, scenes.length - 1);
   const currentScene = scenes[safeSceneIndex];
-  const bgConfig = currentScene ? BACKGROUNDS[currentScene.background] || BACKGROUNDS.meadow : BACKGROUNDS.meadow;
+  
+  // Check for custom/AI-generated background URL
+  const customBgUrl = currentScene?.background ? customBackgrounds[currentScene.background] : null;
+  const bgConfig = currentScene ? (BACKGROUNDS[currentScene.background] || DEFAULT_BACKGROUND) : DEFAULT_BACKGROUND;
+  
   const totalDuration = scenes.reduce((sum, s) => sum + s.duration, 0);
   const hasRoleLabels = characterRoleLabels && Object.keys(characterRoleLabels).length > 0;
   const moodLabel =
@@ -855,21 +918,35 @@ export default function EnhancedPlaybackViewer({
           className="relative w-full max-w-5xl aspect-video rounded-2xl overflow-hidden shadow-2xl"
           style={{
             ...cameraStateToCSS(cameraState, cameraTime),
-            background: bgConfig.gradient,
+            background: customBgUrl ? `url(${customBgUrl}) center/cover no-repeat` : bgConfig.gradient,
           }}
         >
-          {/* Parallax Background */}
-          <ParallaxBackground
-            theme={currentScene.background as any}
-            season="summer"
-            timeOfDay={currentScene.background === 'night' ? 'night' : 'day'}
-            animationProgress={sceneProgress / currentScene.duration}
-            enableParallax={true}
-          />
+          {/* Custom AI Background Image Overlay */}
+          {customBgUrl && (
+            <div 
+              className="absolute inset-0 z-0"
+              style={{
+                backgroundImage: `url(${customBgUrl})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+              }}
+            />
+          )}
+          
+          {/* Parallax Background (only show if no custom background) */}
+          {!customBgUrl && (
+            <ParallaxBackground
+              theme={currentScene.background as any}
+              season="summer"
+              timeOfDay={currentScene.background === 'night' ? 'night' : 'day'}
+              animationProgress={sceneProgress / currentScene.duration}
+              enableParallax={true}
+            />
+          )}
 
           {/* Animated Background Elements (butterflies, birds, etc.) */}
           <AnimatedBackground
-            backgroundType={currentScene.background as any}
+            backgroundType={customBgUrl ? 'meadow' : currentScene.background as any}
             season="summer"
             intensity="medium"
           />
@@ -878,7 +955,9 @@ export default function EnhancedPlaybackViewer({
           <div
             className="absolute bottom-0 left-0 right-0 h-[22%] pointer-events-none"
             style={{
-              background: `linear-gradient(to top, ${bgConfig.groundColor}, transparent)`,
+              background: customBgUrl 
+                ? 'linear-gradient(to top, rgba(0,0,0,0.3), transparent)'
+                : `linear-gradient(to top, ${bgConfig.groundColor}, transparent)`,
               opacity: 0.7,
             }}
           />
