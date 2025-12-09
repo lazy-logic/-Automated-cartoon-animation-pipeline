@@ -1084,12 +1084,20 @@ export default function StoryGenerator({ onStoryGenerated, onClose }: StoryGener
             </button>
           )}
           
-          {step === 3 && !isGenerating && (
+          {step === 3 && (
             <button
               onClick={handleGenerate}
-              className="px-4 py-1.5 bg-violet-500 text-white text-xs rounded hover:bg-violet-600 transition-colors"
+              disabled={isGenerating}
+              className="px-4 py-1.5 bg-violet-500 text-white text-xs rounded hover:bg-violet-600 transition-colors flex items-center gap-1 disabled:opacity-70"
             >
-              Generate
+              {isGenerating ? (
+                <>
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                'Generate'
+              )}
             </button>
           )}
           

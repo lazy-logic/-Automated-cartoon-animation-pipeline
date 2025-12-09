@@ -471,8 +471,8 @@ export default function RiggedCharacter({
       
       {showName && (
         <div 
-          className="absolute -bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap"
-          style={{ transform: flipX ? 'scaleX(-1) translateX(50%)' : 'translateX(-50%)' }}
+          className="absolute -bottom-6 left-1/2 whitespace-nowrap"
+          style={{ transform: 'translateX(-50%)' }}
         >
           <span className="px-3 py-1.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-semibold rounded-full shadow-lg border border-white/40 backdrop-blur-sm">
             {label || rig.name}

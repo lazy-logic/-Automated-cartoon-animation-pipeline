@@ -128,22 +128,21 @@ export function LanguageSelector({
       <div className="relative">
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-2 px-3 py-2 bg-white/10 hover:bg-white/20 rounded-xl transition-colors"
+          className="flex items-center gap-1 px-2 py-1 bg-black/40 hover:bg-black/60 rounded-lg transition-colors text-xs"
         >
-          <span className="text-lg">{currentLang.flag}</span>
-          <span className="text-sm text-gray-300">{currentLang.code.split('-')[0].toUpperCase()}</span>
-          <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+          <span>{currentLang.flag}</span>
+          <ChevronDown className={`w-3 h-3 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </button>
         
         <AnimatePresence>
           {isOpen && (
             <motion.div
-              initial={{ opacity: 0, y: -10 }}
+              initial={{ opacity: 0, y: -5 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="absolute top-full mt-2 right-0 z-50 w-64 bg-slate-800 rounded-xl shadow-2xl border border-white/10 overflow-hidden"
+              exit={{ opacity: 0, y: -5 }}
+              className="absolute top-full mt-1 right-0 z-50 w-48 bg-zinc-900 rounded-lg shadow-xl border border-white/10 overflow-hidden"
             >
-              <div className="max-h-64 overflow-y-auto p-2">
+              <div className="max-h-48 overflow-y-auto py-1">
                 {TTS_LANGUAGES.map(lang => (
                   <button
                     key={lang.code}
@@ -152,18 +151,18 @@ export function LanguageSelector({
                       setIsOpen(false);
                     }}
                     disabled={!isLanguageAvailable(lang.code)}
-                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                    className={`w-full flex items-center gap-2 px-2 py-1.5 text-xs transition-colors ${
                       selectedLanguage === lang.code
-                        ? 'bg-purple-500/30 text-white'
+                        ? 'bg-violet-500/30 text-white'
                         : isLanguageAvailable(lang.code)
                           ? 'hover:bg-white/10 text-gray-300'
-                          : 'opacity-50 cursor-not-allowed text-gray-500'
+                          : 'opacity-40 cursor-not-allowed text-gray-500'
                     }`}
                   >
-                    <span className="text-lg">{lang.flag}</span>
-                    <span className="flex-1 text-left text-sm">{lang.name}</span>
+                    <span>{lang.flag}</span>
+                    <span className="flex-1 text-left truncate">{lang.name.split('(')[0].trim()}</span>
                     {selectedLanguage === lang.code && (
-                      <Check className="w-4 h-4 text-purple-400" />
+                      <Check className="w-3 h-3 text-violet-400" />
                     )}
                   </button>
                 ))}
