@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id             String           @id @default(cuid())
+  title          String
+  description    String?          @db.Text
+  coverImage     String?
+  storyProvider  String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  scenes         Scene[]
+  audioTracks    AudioTrack[]
+  settings       ProjectSettings?
+}
+
+model Scene {
+  id           String      @id @default(cuid())
+  title        String
+  background   String
+  narration    String      @db.Text
+  duration     Int
+  mood         String?
+  cameraZoom   Float       @default(1.0)
+  cameraPanX   Float       @default(0)
+  cameraPanY   Float       @default(0)
+  orderIndex   Int
+  projectId    String
+  project      Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  characters   Character[]
+  dialogueJson Json?
+}
+
+model Character {
+  id         String  @id @default(cuid())
+  rigId      String
+  name       String
+  x          Float
+  y          Float
+  scale      Float    @default(1.0)
+  flipX      Boolean  @default(false)
+  animation  String
+  expression String
+  isTalking  Boolean  @default(false)
+  zIndex     Int      @default(0)
+  sceneId    String
+  scene      Scene    @relation(fields: [sceneId], references: [id], onDelete: Cascade)
+}
+
+model AudioTrack {
+  id        String   @id @default(cuid())
+  type      String
+  url       String?
+  text      String?
+  startTime Int
+  duration  Int
+  volume    Float    @default(1.0)
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model ProjectSettings {
+  id                    String   @id @default(cuid())
+  resolutionWidth       Int
+  resolutionHeight      Int
+  fps                   Int      @default(30)
+  defaultSceneDuration  Int      @default(5000)
+  autoNarration         Boolean  @default(false)
+  narratorVoice         String?
+  projectId             String   @unique
+  project               Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}

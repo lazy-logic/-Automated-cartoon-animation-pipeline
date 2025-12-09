@@ -1,0 +1,381 @@
+import type { CharacterTemplate, BackgroundTemplate } from './types';
+
+// Predefined character templates with cartoon-style designs
+export const CHARACTER_TEMPLATES: CharacterTemplate[] = [
+  {
+    id: 'luna',
+    name: 'luna',
+    displayName: 'Luna',
+    primaryColor: '#FF6B9D',
+    secondaryColor: '#FFB6C1',
+    skinColor: '#FFDAB9',
+    category: 'human',
+    parts: {
+      head: { id: 'head', name: 'Head', x: 0, y: -40, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0.5, zIndex: 5 },
+      body: { id: 'body', name: 'Body', x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 3 },
+      leftArm: { id: 'leftArm', name: 'Left Arm', x: -25, y: 5, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 2 },
+      rightArm: { id: 'rightArm', name: 'Right Arm', x: 25, y: 5, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 4 },
+      leftLeg: { id: 'leftLeg', name: 'Left Leg', x: -10, y: 45, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 1 },
+      rightLeg: { id: 'rightLeg', name: 'Right Leg', x: 10, y: 45, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 1 },
+      face: { id: 'face', name: 'Face', x: 0, y: -40, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0.5, zIndex: 6 },
+    },
+  },
+  {
+    id: 'max',
+    name: 'max',
+    displayName: 'Max',
+    primaryColor: '#54A0FF',
+    secondaryColor: '#74B9FF',
+    skinColor: '#F5CBA7',
+    category: 'human',
+    parts: {
+      head: { id: 'head', name: 'Head', x: 0, y: -40, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0.5, zIndex: 5 },
+      body: { id: 'body', name: 'Body', x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 3 },
+      leftArm: { id: 'leftArm', name: 'Left Arm', x: -25, y: 5, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 2 },
+      rightArm: { id: 'rightArm', name: 'Right Arm', x: 25, y: 5, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 4 },
+      leftLeg: { id: 'leftLeg', name: 'Left Leg', x: -10, y: 45, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 1 },
+      rightLeg: { id: 'rightLeg', name: 'Right Leg', x: 10, y: 45, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 1 },
+      face: { id: 'face', name: 'Face', x: 0, y: -40, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0.5, zIndex: 6 },
+    },
+  },
+  {
+    id: 'pip',
+    name: 'pip',
+    displayName: 'Pip',
+    primaryColor: '#1DD1A1',
+    secondaryColor: '#00D2D3',
+    skinColor: '#FFEAA7',
+    category: 'animal',
+    parts: {
+      head: { id: 'head', name: 'Head', x: 0, y: -30, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0.5, zIndex: 5 },
+      body: { id: 'body', name: 'Body', x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 3 },
+      leftArm: { id: 'leftArm', name: 'Left Arm', x: -20, y: 5, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 2 },
+      rightArm: { id: 'rightArm', name: 'Right Arm', x: 20, y: 5, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 4 },
+      leftLeg: { id: 'leftLeg', name: 'Left Leg', x: -8, y: 35, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 1 },
+      rightLeg: { id: 'rightLeg', name: 'Right Leg', x: 8, y: 35, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 1 },
+      face: { id: 'face', name: 'Face', x: 0, y: -30, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0.5, zIndex: 6 },
+    },
+  },
+  {
+    id: 'robo',
+    name: 'robo',
+    displayName: 'Robo',
+    primaryColor: '#A29BFE',
+    secondaryColor: '#6C5CE7',
+    skinColor: '#DFE6E9',
+    category: 'robot',
+    parts: {
+      head: { id: 'head', name: 'Head', x: 0, y: -35, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0.5, zIndex: 5 },
+      body: { id: 'body', name: 'Body', x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 3 },
+      leftArm: { id: 'leftArm', name: 'Left Arm', x: -28, y: 5, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 2 },
+      rightArm: { id: 'rightArm', name: 'Right Arm', x: 28, y: 5, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 4 },
+      leftLeg: { id: 'leftLeg', name: 'Left Leg', x: -12, y: 45, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 1 },
+      rightLeg: { id: 'rightLeg', name: 'Right Leg', x: 12, y: 45, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 1 },
+      face: { id: 'face', name: 'Face', x: 0, y: -35, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0.5, zIndex: 6 },
+    },
+  },
+  {
+    id: 'bella',
+    name: 'bella',
+    displayName: 'Bella',
+    primaryColor: '#FF9F43',
+    secondaryColor: '#FECA57',
+    skinColor: '#E8DAEF',
+    category: 'fantasy',
+    parts: {
+      head: { id: 'head', name: 'Head', x: 0, y: -38, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0.5, zIndex: 5 },
+      body: { id: 'body', name: 'Body', x: 0, y: 0, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 3 },
+      leftArm: { id: 'leftArm', name: 'Left Arm', x: -22, y: 5, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 2 },
+      rightArm: { id: 'rightArm', name: 'Right Arm', x: 22, y: 5, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 4 },
+      leftLeg: { id: 'leftLeg', name: 'Left Leg', x: -9, y: 42, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 1 },
+      rightLeg: { id: 'rightLeg', name: 'Right Leg', x: 9, y: 42, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 1 },
+      face: { id: 'face', name: 'Face', x: 0, y: -38, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0.5, zIndex: 6 },
+    },
+  },
+  {
+    id: 'dino',
+    name: 'dino',
+    displayName: 'Dino',
+    primaryColor: '#00CEC9',
+    secondaryColor: '#81ECEC',
+    skinColor: '#55EFC4',
+    category: 'animal',
+    parts: {
+      head: { id: 'head', name: 'Head', x: 0, y: -32, rotation: 0, scaleX: 1.1, scaleY: 1, anchorX: 0.5, anchorY: 0.5, zIndex: 5 },
+      body: { id: 'body', name: 'Body', x: 0, y: 0, rotation: 0, scaleX: 1.1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 3 },
+      leftArm: { id: 'leftArm', name: 'Left Arm', x: -18, y: 8, rotation: 0, scaleX: 0.8, scaleY: 0.8, anchorX: 0.5, anchorY: 0, zIndex: 2 },
+      rightArm: { id: 'rightArm', name: 'Right Arm', x: 18, y: 8, rotation: 0, scaleX: 0.8, scaleY: 0.8, anchorX: 0.5, anchorY: 0, zIndex: 4 },
+      leftLeg: { id: 'leftLeg', name: 'Left Leg', x: -10, y: 40, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 1 },
+      rightLeg: { id: 'rightLeg', name: 'Right Leg', x: 10, y: 40, rotation: 0, scaleX: 1, scaleY: 1, anchorX: 0.5, anchorY: 0, zIndex: 1 },
+      face: { id: 'face', name: 'Face', x: 0, y: -32, rotation: 0, scaleX: 1.1, scaleY: 1, anchorX: 0.5, anchorY: 0.5, zIndex: 6 },
+    },
+  },
+];
+
+// Background templates with parallax layers
+export const BACKGROUND_TEMPLATES: BackgroundTemplate[] = [
+  {
+    id: 'meadow',
+    name: 'meadow',
+    displayName: 'Sunny Meadow',
+    category: 'outdoor',
+    groundLevel: 75,
+    layers: [
+      { id: 'sky', gradient: 'linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%)', parallaxSpeed: 0, zIndex: 0 },
+      { id: 'clouds', color: 'rgba(255,255,255,0.8)', parallaxSpeed: 0.1, zIndex: 1 },
+      { id: 'hills-back', color: '#90EE90', parallaxSpeed: 0.2, zIndex: 2 },
+      { id: 'hills-front', color: '#7CCD7C', parallaxSpeed: 0.3, zIndex: 3 },
+      { id: 'grass', color: '#228B22', parallaxSpeed: 0.5, zIndex: 4 },
+    ],
+  },
+  {
+    id: 'forest',
+    name: 'forest',
+    displayName: 'Enchanted Forest',
+    category: 'outdoor',
+    groundLevel: 78,
+    layers: [
+      { id: 'sky', gradient: 'linear-gradient(180deg, #4A7C59 0%, #8FBC8F 50%, #2F4F4F 100%)', parallaxSpeed: 0, zIndex: 0 },
+      { id: 'trees-back', color: '#2E5A3C', parallaxSpeed: 0.15, zIndex: 1 },
+      { id: 'trees-mid', color: '#3D7A4F', parallaxSpeed: 0.25, zIndex: 2 },
+      { id: 'trees-front', color: '#4A9A5F', parallaxSpeed: 0.4, zIndex: 3 },
+      { id: 'ground', color: '#5D4037', parallaxSpeed: 0.5, zIndex: 4 },
+    ],
+  },
+  {
+    id: 'beach',
+    name: 'beach',
+    displayName: 'Tropical Beach',
+    category: 'outdoor',
+    groundLevel: 80,
+    layers: [
+      { id: 'sky', gradient: 'linear-gradient(180deg, #00BFFF 0%, #87CEEB 50%, #FFE4B5 100%)', parallaxSpeed: 0, zIndex: 0 },
+      { id: 'sun', color: '#FFD700', parallaxSpeed: 0, zIndex: 1 },
+      { id: 'ocean', color: '#20B2AA', parallaxSpeed: 0.1, zIndex: 2 },
+      { id: 'waves', color: '#48D1CC', parallaxSpeed: 0.2, zIndex: 3 },
+      { id: 'sand', color: '#F4A460', parallaxSpeed: 0.5, zIndex: 4 },
+    ],
+  },
+  {
+    id: 'sunset',
+    name: 'sunset',
+    displayName: 'Golden Sunset',
+    category: 'outdoor',
+    groundLevel: 76,
+    layers: [
+      { id: 'sky', gradient: 'linear-gradient(180deg, #FF6B6B 0%, #FFA07A 30%, #FFD700 60%, #FF8C00 100%)', parallaxSpeed: 0, zIndex: 0 },
+      { id: 'sun', color: '#FF4500', parallaxSpeed: 0, zIndex: 1 },
+      { id: 'clouds', color: 'rgba(255,200,150,0.6)', parallaxSpeed: 0.1, zIndex: 2 },
+      { id: 'hills', color: '#8B4513', parallaxSpeed: 0.3, zIndex: 3 },
+      { id: 'ground', color: '#654321', parallaxSpeed: 0.5, zIndex: 4 },
+    ],
+  },
+  {
+    id: 'space',
+    name: 'space',
+    displayName: 'Outer Space',
+    category: 'fantasy',
+    groundLevel: 85,
+    layers: [
+      { id: 'space', gradient: 'radial-gradient(ellipse at 30% 20%, #1a1a2e 0%, #0f0f23 50%, #000011 100%)', parallaxSpeed: 0, zIndex: 0 },
+      { id: 'stars', color: 'rgba(255,255,255,0.8)', parallaxSpeed: 0.05, zIndex: 1 },
+      { id: 'nebula', gradient: 'radial-gradient(ellipse at 70% 60%, rgba(138,43,226,0.3) 0%, transparent 50%)', parallaxSpeed: 0.1, zIndex: 2 },
+      { id: 'planet', color: '#FF6347', parallaxSpeed: 0.15, zIndex: 3 },
+      { id: 'ground', color: '#4A4A6A', parallaxSpeed: 0.5, zIndex: 4 },
+    ],
+  },
+  {
+    id: 'castle',
+    name: 'castle',
+    displayName: 'Fairy Tale Castle',
+    category: 'fantasy',
+    groundLevel: 82,
+    layers: [
+      { id: 'sky', gradient: 'linear-gradient(180deg, #E6E6FA 0%, #DDA0DD 50%, #FFB6C1 100%)', parallaxSpeed: 0, zIndex: 0 },
+      { id: 'clouds', color: 'rgba(255,255,255,0.9)', parallaxSpeed: 0.1, zIndex: 1 },
+      { id: 'castle-back', color: '#9370DB', parallaxSpeed: 0.2, zIndex: 2 },
+      { id: 'castle-front', color: '#BA55D3', parallaxSpeed: 0.3, zIndex: 3 },
+      { id: 'path', color: '#DEB887', parallaxSpeed: 0.5, zIndex: 4 },
+    ],
+  },
+  {
+    id: 'city',
+    name: 'city',
+    displayName: 'Cartoon City',
+    category: 'urban',
+    groundLevel: 80,
+    layers: [
+      { id: 'sky', gradient: 'linear-gradient(180deg, #87CEEB 0%, #B0E0E6 100%)', parallaxSpeed: 0, zIndex: 0 },
+      { id: 'buildings-back', color: '#708090', parallaxSpeed: 0.15, zIndex: 1 },
+      { id: 'buildings-mid', color: '#778899', parallaxSpeed: 0.25, zIndex: 2 },
+      { id: 'buildings-front', color: '#A9A9A9', parallaxSpeed: 0.35, zIndex: 3 },
+      { id: 'road', color: '#696969', parallaxSpeed: 0.5, zIndex: 4 },
+    ],
+  },
+  {
+    id: 'underwater',
+    name: 'underwater',
+    displayName: 'Under the Sea',
+    category: 'fantasy',
+    groundLevel: 85,
+    layers: [
+      { id: 'deep', gradient: 'linear-gradient(180deg, #006994 0%, #003366 50%, #001a33 100%)', parallaxSpeed: 0, zIndex: 0 },
+      { id: 'bubbles', color: 'rgba(255,255,255,0.4)', parallaxSpeed: 0.1, zIndex: 1 },
+      { id: 'seaweed-back', color: '#228B22', parallaxSpeed: 0.2, zIndex: 2 },
+      { id: 'coral', color: '#FF6B6B', parallaxSpeed: 0.3, zIndex: 3 },
+      { id: 'sand', color: '#F4A460', parallaxSpeed: 0.5, zIndex: 4 },
+    ],
+  },
+  {
+    id: 'cozy-room',
+    name: 'cozy-room',
+    displayName: 'Cozy Room',
+    category: 'indoor',
+    groundLevel: 85,
+    layers: [
+      { id: 'wall', color: '#FFEFD5', parallaxSpeed: 0, zIndex: 0 },
+      { id: 'window', color: '#87CEEB', parallaxSpeed: 0, zIndex: 1 },
+      { id: 'furniture', color: '#DEB887', parallaxSpeed: 0.1, zIndex: 2 },
+      { id: 'rug', color: '#CD853F', parallaxSpeed: 0.2, zIndex: 3 },
+      { id: 'floor', color: '#8B4513', parallaxSpeed: 0.3, zIndex: 4 },
+    ],
+  },
+  {
+    id: 'classroom',
+    name: 'classroom',
+    displayName: 'School Classroom',
+    category: 'indoor',
+    groundLevel: 85,
+    layers: [
+      { id: 'wall', color: '#F5F5DC', parallaxSpeed: 0, zIndex: 0 },
+      { id: 'blackboard', color: '#2F4F4F', parallaxSpeed: 0, zIndex: 1 },
+      { id: 'desks', color: '#D2691E', parallaxSpeed: 0.1, zIndex: 2 },
+      { id: 'chairs', color: '#8B4513', parallaxSpeed: 0.15, zIndex: 3 },
+      { id: 'floor', color: '#A0522D', parallaxSpeed: 0.2, zIndex: 4 },
+    ],
+  },
+];
+
+// Expression configurations for lip-sync and emotions
+export const EXPRESSION_CONFIGS = {
+  neutral: {
+    eyeScale: 1,
+    eyebrowY: 0,
+    mouthWidth: 0.6,
+    mouthHeight: 0.1,
+    mouthCurve: 0,
+  },
+  happy: {
+    eyeScale: 0.9,
+    eyebrowY: -2,
+    mouthWidth: 0.8,
+    mouthHeight: 0.3,
+    mouthCurve: 0.5,
+  },
+  sad: {
+    eyeScale: 1.1,
+    eyebrowY: 3,
+    mouthWidth: 0.5,
+    mouthHeight: 0.15,
+    mouthCurve: -0.4,
+  },
+  surprised: {
+    eyeScale: 1.4,
+    eyebrowY: -5,
+    mouthWidth: 0.4,
+    mouthHeight: 0.5,
+    mouthCurve: 0,
+  },
+  angry: {
+    eyeScale: 0.8,
+    eyebrowY: 4,
+    mouthWidth: 0.7,
+    mouthHeight: 0.2,
+    mouthCurve: -0.3,
+  },
+  talking: {
+    eyeScale: 1,
+    eyebrowY: 0,
+    mouthWidth: 0.5,
+    mouthHeight: 0.4,
+    mouthCurve: 0,
+  },
+};
+
+// Animation presets for quick character animations
+export const ANIMATION_PRESETS = {
+  idle: {
+    name: 'Idle',
+    keyframes: [
+      { time: 0, y: 0 },
+      { time: 500, y: -3 },
+      { time: 1000, y: 0 },
+    ],
+  },
+  wave: {
+    name: 'Wave',
+    keyframes: [
+      { time: 0, rotation: 0 },
+      { time: 200, rotation: -15 },
+      { time: 400, rotation: 15 },
+      { time: 600, rotation: -15 },
+      { time: 800, rotation: 0 },
+    ],
+  },
+  jump: {
+    name: 'Jump',
+    keyframes: [
+      { time: 0, y: 0, scale: 1 },
+      { time: 150, y: 0, scale: 0.9 },
+      { time: 300, y: -30, scale: 1.1 },
+      { time: 500, y: 0, scale: 1 },
+    ],
+  },
+  bounce: {
+    name: 'Bounce',
+    keyframes: [
+      { time: 0, y: 0 },
+      { time: 250, y: -15 },
+      { time: 500, y: 0 },
+      { time: 750, y: -8 },
+      { time: 1000, y: 0 },
+    ],
+  },
+  walkLeft: {
+    name: 'Walk Left',
+    keyframes: [
+      { time: 0, x: 0 },
+      { time: 1000, x: -20 },
+    ],
+  },
+  walkRight: {
+    name: 'Walk Right',
+    keyframes: [
+      { time: 0, x: 0 },
+      { time: 1000, x: 20 },
+    ],
+  },
+};
+
+// Scene transition configurations
+export const TRANSITION_CONFIGS = {
+  fade: { duration: 500, easing: 'easeInOut' },
+  slide: { duration: 600, easing: 'easeOut' },
+  zoom: { duration: 400, easing: 'easeIn' },
+  none: { duration: 0, easing: 'linear' },
+};
+
+// SVG Background templates from public folder
+export const SVG_BACKGROUNDS = [
+  { id: 'svg-1', name: 'Scene 1', file: '/1.svg', description: 'Cartoon scene 1' },
+  { id: 'svg-2', name: 'Scene 2', file: '/2.svg', description: 'Cartoon scene 2' },
+  { id: 'svg-3', name: 'Scene 3', file: '/3.svg', description: 'Cartoon scene 3' },
+  { id: 'svg-4', name: 'Scene 4', file: '/4.svg', description: 'Cartoon scene 4' },
+  { id: 'svg-5', name: 'Scene 5', file: '/5.svg', description: 'Cartoon scene 5' },
+  { id: 'svg-6', name: 'Scene 6', file: '/6.svg', description: 'Cartoon scene 6' },
+  { id: 'svg-7', name: 'Scene 7', file: '/7.svg', description: 'Cartoon scene 7' },
+  { id: 'svg-8', name: 'Scene 8', file: '/8.svg', description: 'Cartoon scene 8' },
+  { id: 'svg-9', name: 'Scene 9', file: '/9.svg', description: 'Cartoon scene 9' },
+  { id: 'svg-10', name: 'Scene 10', file: '/10.svg', description: 'Cartoon scene 10' },
+  { id: 'svg-illustrated', name: 'Illustrated', file: '/12735490_b87t_23nk_210105.svg', description: 'Illustrated background' },
+];
