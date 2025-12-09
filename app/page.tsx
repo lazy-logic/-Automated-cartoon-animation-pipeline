@@ -1192,16 +1192,11 @@ export default function HomePage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="max-w-xl"
+              className="max-w-2xl"
             >
-              {/* Hero Icon */}
-              <div className="w-24 h-24 mx-auto mb-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-2xl shadow-purple-500/30">
-                <Sparkles className="w-12 h-12 text-white" />
-              </div>
-
-              <h2 className="text-4xl font-bold text-white mb-3">
+              <h2 className="text-5xl md:text-6xl font-extrabold text-white mb-4 tracking-tight">
                 Create Your Own
-                <span className="block bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                <span className="block bg-gradient-to-r from-purple-400 via-pink-400 to-rose-400 bg-clip-text text-transparent mt-1">
                   Animated Story
                 </span>
               </h2>

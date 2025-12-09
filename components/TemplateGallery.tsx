@@ -90,34 +90,34 @@ export default function TemplateGallery({ isOpen, onClose }: TemplateGalleryProp
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[85vh] overflow-hidden flex flex-col">
+      <div className="bg-gray-900 rounded-xl shadow-2xl w-full max-w-5xl max-h-[75vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-              <Wand2 className="w-5 h-5 text-white" />
+        <div className="flex items-center justify-between px-5 py-3 border-b border-gray-700">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+              <Wand2 className="w-4 h-4 text-white" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-800">Template Gallery</h2>
-              <p className="text-sm text-gray-500">Choose pre-made scenes or add characters</p>
+              <h2 className="text-lg font-bold text-white">Template Gallery</h2>
+              <p className="text-xs text-gray-400">Choose pre-made scenes or add characters</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-gray-400" />
           </button>
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-gray-100">
+        <div className="flex border-b border-gray-700">
           <button
             onClick={() => setActiveTab('templates')}
-            className={`flex-1 px-6 py-3 text-sm font-medium transition-colors ${
+            className={`flex-1 px-5 py-2.5 text-sm font-medium transition-colors ${
               activeTab === 'templates'
-                ? 'text-purple-600 border-b-2 border-purple-600 bg-purple-50'
-                : 'text-gray-500 hover:text-gray-700'
+                ? 'text-purple-400 border-b-2 border-purple-500 bg-purple-500/10'
+                : 'text-gray-400 hover:text-gray-300'
             }`}
           >
             <Layout className="w-4 h-4 inline-block mr-2" />
@@ -125,10 +125,10 @@ export default function TemplateGallery({ isOpen, onClose }: TemplateGalleryProp
           </button>
           <button
             onClick={() => setActiveTab('characters')}
-            className={`flex-1 px-6 py-3 text-sm font-medium transition-colors ${
+            className={`flex-1 px-5 py-2.5 text-sm font-medium transition-colors ${
               activeTab === 'characters'
-                ? 'text-purple-600 border-b-2 border-purple-600 bg-purple-50'
-                : 'text-gray-500 hover:text-gray-700'
+                ? 'text-purple-400 border-b-2 border-purple-500 bg-purple-500/10'
+                : 'text-gray-400 hover:text-gray-300'
             }`}
           >
             <Users className="w-4 h-4 inline-block mr-2" />
@@ -141,15 +141,15 @@ export default function TemplateGallery({ isOpen, onClose }: TemplateGalleryProp
           {activeTab === 'templates' ? (
             <>
               {/* Template Categories Sidebar */}
-              <div className="w-48 border-r border-gray-100 p-4 space-y-1">
+              <div className="w-44 border-r border-gray-700 p-3 space-y-1">
                 {TEMPLATE_CATEGORIES.map((cat) => (
                   <button
                     key={cat.id}
                     onClick={() => setTemplateCategory(cat.id)}
                     className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
                       templateCategory === cat.id
-                        ? 'bg-purple-100 text-purple-700'
-                        : 'text-gray-600 hover:bg-gray-100'
+                        ? 'bg-purple-500/20 text-purple-400'
+                        : 'text-gray-400 hover:bg-gray-800'
                     }`}
                   >
                     {cat.icon}
@@ -159,43 +159,43 @@ export default function TemplateGallery({ isOpen, onClose }: TemplateGalleryProp
               </div>
 
               {/* Templates Grid */}
-              <div className="flex-1 p-6 overflow-y-auto">
-                <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="flex-1 p-4 overflow-y-auto">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
                   {filteredTemplates.map((template) => (
                     <div
                       key={template.id}
-                      className={`group relative rounded-xl border-2 overflow-hidden cursor-pointer transition-all ${
+                      className={`group relative rounded-lg border overflow-hidden cursor-pointer transition-all ${
                         selectedTemplate?.id === template.id
-                          ? 'border-purple-500 shadow-lg shadow-purple-100'
-                          : 'border-gray-200 hover:border-gray-300'
+                          ? 'border-purple-500 shadow-lg shadow-purple-500/20'
+                          : 'border-gray-700 hover:border-gray-600'
                       }`}
                       onClick={() => setSelectedTemplate(template)}
                     >
                       {/* Preview */}
-                      <div className="aspect-video bg-gradient-to-br from-indigo-100 to-purple-100 relative">
+                      <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-900 relative">
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <Sparkles className="w-8 h-8 text-purple-300" />
+                          <Sparkles className="w-6 h-6 text-purple-500/50" />
                         </div>
                         
                         {/* Character count badge */}
-                        <div className="absolute top-2 right-2 px-2 py-1 bg-black/50 rounded-full text-xs text-white">
-                          {template.characters.length} characters
+                        <div className="absolute top-2 right-2 px-2 py-0.5 bg-black/60 rounded-full text-xs text-white">
+                          {template.characters.length} chars
                         </div>
 
                         {/* Category badge */}
-                        <div className="absolute top-2 left-2 px-2 py-1 bg-purple-500 rounded-full text-xs text-white capitalize">
+                        <div className="absolute top-2 left-2 px-2 py-0.5 bg-purple-500 rounded-full text-xs text-white capitalize">
                           {template.category}
                         </div>
                       </div>
 
                       {/* Info */}
-                      <div className="p-3">
-                        <h3 className="font-medium text-gray-800">{template.name}</h3>
-                        <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+                      <div className="p-2.5 bg-gray-800">
+                        <h3 className="font-medium text-white text-sm">{template.name}</h3>
+                        <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">
                           {template.description}
                         </p>
-                        <div className="flex items-center justify-between mt-2">
-                          <span className="text-xs text-gray-400">
+                        <div className="flex items-center justify-between mt-1.5">
+                          <span className="text-xs text-gray-500">
                             {(template.duration / 1000).toFixed(1)}s
                           </span>
                           <button
@@ -232,15 +232,15 @@ export default function TemplateGallery({ isOpen, onClose }: TemplateGalleryProp
           ) : (
             <>
               {/* Sprite Categories Sidebar */}
-              <div className="w-48 border-r border-gray-100 p-4 space-y-1">
+              <div className="w-44 border-r border-gray-700 p-3 space-y-1">
                 {SPRITE_CATEGORIES.map((cat) => (
                   <button
                     key={cat.id}
                     onClick={() => setSpriteCategory(cat.id)}
                     className={`w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
                       spriteCategory === cat.id
-                        ? 'bg-purple-100 text-purple-700'
-                        : 'text-gray-600 hover:bg-gray-100'
+                        ? 'bg-purple-500/20 text-purple-400'
+                        : 'text-gray-400 hover:bg-gray-800'
                     }`}
                   >
                     {cat.name}
@@ -249,20 +249,20 @@ export default function TemplateGallery({ isOpen, onClose }: TemplateGalleryProp
               </div>
 
               {/* Sprites Grid */}
-              <div className="flex-1 p-6 overflow-y-auto">
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="flex-1 p-4 overflow-y-auto">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                   {filteredSprites.map((sprite) => (
                     <div
                       key={sprite.id}
-                      className={`group relative rounded-xl border-2 overflow-hidden cursor-pointer transition-all ${
+                      className={`group relative rounded-lg border overflow-hidden cursor-pointer transition-all ${
                         selectedSprite?.id === sprite.id
-                          ? 'border-purple-500 shadow-lg shadow-purple-100'
-                          : 'border-gray-200 hover:border-gray-300'
+                          ? 'border-purple-500 shadow-lg shadow-purple-500/20'
+                          : 'border-gray-700 hover:border-gray-600'
                       }`}
                       onClick={() => setSelectedSprite(sprite)}
                     >
                       {/* Character Preview */}
-                      <div className="aspect-square bg-gradient-to-br from-gray-50 to-gray-100 relative overflow-hidden">
+                      <div className="aspect-square bg-gradient-to-br from-gray-800 to-gray-900 relative overflow-hidden">
                         {/* SVG File Preview */}
                         <img
                           src={sprite.svgFile}
@@ -278,17 +278,17 @@ export default function TemplateGallery({ isOpen, onClose }: TemplateGalleryProp
                       </div>
 
                       {/* Info */}
-                      <div className="p-3">
-                        <h3 className="font-medium text-gray-800 text-sm">{sprite.name}</h3>
-                        <p className="text-xs text-gray-500 mt-0.5 line-clamp-1">
+                      <div className="p-2.5 bg-gray-800">
+                        <h3 className="font-medium text-white text-sm">{sprite.name}</h3>
+                        <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">
                           {sprite.description}
                         </p>
                         
                         {/* Poses & Expressions */}
-                        <div className="flex gap-2 mt-2 text-xs text-gray-400">
+                        <div className="flex gap-2 mt-1.5 text-xs text-gray-500">
                           <span>{sprite.poses.length} poses</span>
                           <span>•</span>
-                          <span>{sprite.expressions.length} expressions</span>
+                          <span>{sprite.expressions.length} expr</span>
                         </div>
 
                         <button
@@ -296,7 +296,7 @@ export default function TemplateGallery({ isOpen, onClose }: TemplateGalleryProp
                             e.stopPropagation();
                             handleAddCharacter(sprite);
                           }}
-                          className="w-full mt-2 flex items-center justify-center gap-1 px-3 py-1.5 bg-purple-500 text-white text-xs rounded-lg hover:bg-purple-600 transition-colors"
+                          className="w-full mt-2 flex items-center justify-center gap-1 px-2 py-1 bg-purple-500 text-white text-xs rounded-lg hover:bg-purple-600 transition-colors"
                         >
                           <Plus className="w-3 h-3" />
                           Add to Scene
@@ -325,35 +325,35 @@ export default function TemplateGallery({ isOpen, onClose }: TemplateGalleryProp
 
           {/* Detail Panel */}
           {(selectedTemplate || selectedSprite) && (
-            <div className="w-72 border-l border-gray-100 p-4 bg-gray-50">
+            <div className="w-64 border-l border-gray-700 p-3 bg-gray-800/50">
               {selectedTemplate && activeTab === 'templates' && (
                 <div>
-                  <h3 className="font-bold text-gray-800 mb-2">{selectedTemplate.name}</h3>
-                  <p className="text-sm text-gray-600 mb-4">{selectedTemplate.description}</p>
+                  <h3 className="font-bold text-white text-sm mb-1.5">{selectedTemplate.name}</h3>
+                  <p className="text-xs text-gray-400 mb-3">{selectedTemplate.description}</p>
                   
-                  <div className="space-y-3 text-sm">
+                  <div className="space-y-2 text-xs">
                     <div className="flex justify-between">
                       <span className="text-gray-500">Duration</span>
-                      <span className="font-medium">{(selectedTemplate.duration / 1000).toFixed(1)}s</span>
+                      <span className="font-medium text-white">{(selectedTemplate.duration / 1000).toFixed(1)}s</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">Characters</span>
-                      <span className="font-medium">{selectedTemplate.characters.length}</span>
+                      <span className="font-medium text-white">{selectedTemplate.characters.length}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-500">Category</span>
-                      <span className="font-medium capitalize">{selectedTemplate.category}</span>
+                      <span className="font-medium capitalize text-white">{selectedTemplate.category}</span>
                     </div>
                   </div>
 
-                  <div className="mt-4 p-3 bg-white rounded-lg">
+                  <div className="mt-3 p-2.5 bg-gray-800 rounded-lg">
                     <p className="text-xs text-gray-500 mb-1">Suggested Narration:</p>
-                    <p className="text-sm text-gray-700 italic">"{selectedTemplate.suggestedNarration}"</p>
+                    <p className="text-xs text-gray-300 italic">" {selectedTemplate.suggestedNarration}"</p>
                   </div>
 
                   <button
                     onClick={() => handleAddTemplate(selectedTemplate)}
-                    className="w-full mt-4 flex items-center justify-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
+                    className="w-full mt-3 flex items-center justify-center gap-2 px-3 py-2 bg-purple-500 text-white text-sm rounded-lg hover:bg-purple-600 transition-colors"
                   >
                     <Plus className="w-4 h-4" />
                     Add This Scene
@@ -363,17 +363,17 @@ export default function TemplateGallery({ isOpen, onClose }: TemplateGalleryProp
 
               {selectedSprite && activeTab === 'characters' && (
                 <div>
-                  <h3 className="font-bold text-gray-800 mb-2">{selectedSprite.name}</h3>
-                  <p className="text-sm text-gray-600 mb-4">{selectedSprite.description}</p>
+                  <h3 className="font-bold text-white text-sm mb-1.5">{selectedSprite.name}</h3>
+                  <p className="text-xs text-gray-400 mb-3">{selectedSprite.description}</p>
                   
                   {/* Color Palette */}
-                  <div className="mb-4">
-                    <p className="text-xs text-gray-500 mb-2">Color Palette</p>
-                    <div className="flex gap-2">
+                  <div className="mb-3">
+                    <p className="text-xs text-gray-500 mb-1.5">Color Palette</p>
+                    <div className="flex gap-1.5">
                       {Object.entries(selectedSprite.colors).map(([key, color]) => (
                         <div
                           key={key}
-                          className="w-8 h-8 rounded-lg border border-gray-200"
+                          className="w-6 h-6 rounded border border-gray-600"
                           style={{ backgroundColor: color }}
                           title={key}
                         />
@@ -382,13 +382,13 @@ export default function TemplateGallery({ isOpen, onClose }: TemplateGalleryProp
                   </div>
 
                   {/* Poses */}
-                  <div className="mb-4">
-                    <p className="text-xs text-gray-500 mb-2">Available Poses</p>
+                  <div className="mb-3">
+                    <p className="text-xs text-gray-500 mb-1.5">Available Poses</p>
                     <div className="flex flex-wrap gap-1">
                       {selectedSprite.poses.map((pose) => (
                         <span
                           key={pose.id}
-                          className="px-2 py-1 bg-gray-200 rounded text-xs"
+                          className="px-2 py-0.5 bg-gray-700 text-gray-300 rounded text-xs"
                         >
                           {pose.name}
                         </span>
@@ -397,13 +397,13 @@ export default function TemplateGallery({ isOpen, onClose }: TemplateGalleryProp
                   </div>
 
                   {/* Expressions */}
-                  <div className="mb-4">
-                    <p className="text-xs text-gray-500 mb-2">Expressions</p>
+                  <div className="mb-3">
+                    <p className="text-xs text-gray-500 mb-1.5">Expressions</p>
                     <div className="flex flex-wrap gap-1">
                       {selectedSprite.expressions.map((expr) => (
                         <span
                           key={expr.id}
-                          className="px-2 py-1 bg-gray-200 rounded text-xs"
+                          className="px-2 py-0.5 bg-gray-700 text-gray-300 rounded text-xs"
                         >
                           {expr.name}
                         </span>
@@ -412,13 +412,13 @@ export default function TemplateGallery({ isOpen, onClose }: TemplateGalleryProp
                   </div>
 
                   {/* Animations */}
-                  <div className="mb-4">
-                    <p className="text-xs text-gray-500 mb-2">Animations</p>
+                  <div className="mb-3">
+                    <p className="text-xs text-gray-500 mb-1.5">Animations</p>
                     <div className="flex flex-wrap gap-1">
                       {selectedSprite.animations.map((anim) => (
                         <span
                           key={anim.id}
-                          className="px-2 py-1 bg-purple-100 text-purple-700 rounded text-xs"
+                          className="px-2 py-0.5 bg-purple-500/20 text-purple-400 rounded text-xs"
                         >
                           {anim.name}
                         </span>
@@ -428,7 +428,7 @@ export default function TemplateGallery({ isOpen, onClose }: TemplateGalleryProp
 
                   <button
                     onClick={() => handleAddCharacter(selectedSprite)}
-                    className="w-full mt-4 flex items-center justify-center gap-2 px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors"
+                    className="w-full mt-3 flex items-center justify-center gap-2 px-3 py-2 bg-purple-500 text-white text-sm rounded-lg hover:bg-purple-600 transition-colors"
                   >
                     <Plus className="w-4 h-4" />
                     Add to Current Scene

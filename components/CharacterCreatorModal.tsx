@@ -1088,11 +1088,11 @@ export default function CharacterCreatorModal({
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="w-full max-w-4xl bg-gray-900 rounded-2xl shadow-2xl overflow-hidden max-h-[90vh]"
+          className="w-full max-w-5xl bg-gray-900 rounded-xl shadow-2xl overflow-hidden max-h-[80vh]"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-700">
+          <div className="flex items-center justify-between px-5 py-3 border-b border-gray-700">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
                 <User className="w-5 h-5 text-white" />
@@ -1128,12 +1128,12 @@ export default function CharacterCreatorModal({
             </div>
           </div>
 
-          <div className="flex h-[calc(90vh-140px)]">
-            {/* Preview Panel - Full Size Character Preview */}
-            <div className="w-2/5 bg-gray-800 p-6 flex flex-col items-center justify-start border-r border-gray-700 overflow-y-auto">
-              {/* Large Character Preview */}
+          <div className="flex h-[calc(80vh-120px)]">
+            {/* Preview Panel - Compact Character Preview */}
+            <div className="w-1/3 bg-gray-800 p-4 flex flex-col items-center justify-start border-r border-gray-700 overflow-y-auto">
+              {/* Character Preview */}
               <div 
-                className="w-full aspect-[3/4] max-h-[400px] rounded-2xl flex items-center justify-center mb-4 relative overflow-hidden"
+                className="w-full aspect-[3/4] max-h-[280px] rounded-xl flex items-center justify-center mb-3 relative overflow-hidden"
                 style={{ backgroundColor: useAICharacter && aiGeneratedImage ? '#1a1a2e' : character.colors.primary + '15' }}
               >
                 {useAICharacter && aiGeneratedImage ? (

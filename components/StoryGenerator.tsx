@@ -824,10 +824,10 @@ export default function StoryGenerator({ onStoryGenerated, onClose }: StoryGener
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.95, opacity: 0, y: 20 }}
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        className="bg-[#12121a] rounded-2xl shadow-2xl w-full max-w-2xl overflow-hidden border border-white/10"
+        className="bg-[#12121a] rounded-xl shadow-2xl w-full max-w-3xl overflow-hidden border border-white/10"
       >
         {/* Header - Simplified */}
-        <div className="relative p-6 border-b border-white/10">
+        <div className="relative px-5 py-4 border-b border-white/10">
           <button
             onClick={onClose}
             className="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-lg transition-colors text-zinc-400 hover:text-white"
@@ -865,7 +865,7 @@ export default function StoryGenerator({ onStoryGenerated, onClose }: StoryGener
         </div>
 
         {/* Content */}
-        <div className="p-6 min-h-[380px] max-h-[50vh] overflow-y-auto">
+        <div className="p-5 min-h-[300px] max-h-[45vh] overflow-y-auto">
           <AnimatePresence mode="wait">
             {/* Step 1: Story Type */}
             {step === 1 && (
