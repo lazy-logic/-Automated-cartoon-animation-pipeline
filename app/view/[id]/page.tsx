@@ -16,9 +16,9 @@ import {
   Home,
 } from 'lucide-react';
 import Link from 'next/link';
-import RiggedCharacter from '@/components/RiggedCharacter';
-import AnimatedBackground from '@/components/AnimatedBackground';
-import { getCharacterRig } from '@/lib/sprite-system';
+import RiggedCharacter from '@/components/shared/RiggedCharacter';
+import AnimatedBackground from '@/components/shared/AnimatedBackground';
+import { getCharacterRig } from '@/lib/utils/sprite-system';
 
 interface SharedScene {
   id: string;

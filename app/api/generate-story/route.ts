@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { generateAIStory } from '@/lib/ai-service';
-import { AIStoryRequest } from '@/lib/ai-types';
+import { generateAIStory } from '@/lib/ai/ai-service';
+import { AIStoryRequest } from '@/lib/ai/ai-types';
 
 export async function POST(request: NextRequest) {
   try {

@@ -44,36 +44,36 @@ import {
   Undo2,
   Redo2,
 } from 'lucide-react';
-import StoryGenerator from '@/components/StoryGenerator';
-import EnhancedPlaybackViewer from '@/components/EnhancedPlaybackViewer';
-import InteractiveSceneEditor, { EditableScene } from '@/components/InteractiveSceneEditor';
-import VideoExporter from '@/components/VideoExporter';
-import RiggedCharacter from '@/components/RiggedCharacter';
-import AnimatedBackground from '@/components/AnimatedBackground';
-import ParallaxBackground from '@/components/ParallaxBackground';
-import { getCharacterRig, CHARACTER_RIGS } from '@/lib/sprite-system';
-import { storyToEditableScenes, autoEnhanceScene, applyAutoDurations, aiSceneToEditableScene } from '@/lib/story-animator';
-import type { AIStoryResponse } from '@/lib/ai-types';
-import { VideoExportEngine, editableSceneToRenderData, type ExportProgress } from '@/lib/video-export-engine';
-import TTSSettingsPanel from '@/components/TTSSettingsPanel';
-import { SCENE_TEMPLATES, applyTemplate } from '@/lib/scene-templates';
-import CharacterCreatorModal from '@/components/CharacterCreatorModal';
-import KeyboardShortcutsPanel from '@/components/KeyboardShortcutsPanel';
-import SettingsPanel from '@/components/SettingsPanel';
-import CollaborationPanel from '@/components/CollaborationPanel';
-import { TransitionConfig, createDefaultTransition, TRANSITION_PRESETS } from '@/lib/scene-transitions';
-import TransitionPicker from '@/components/TransitionPicker';
-import { AutoSaveManager, loadProjectLocally, formatTimeAgo } from '@/lib/auto-save';
-import { copyToClipboard, generateSceneThumbnail } from '@/lib/gif-export';
-import { suggestNextScene, analyzeEmotion, suggestBackgrounds } from '@/lib/ai-suggestions';
-import OnboardingTour from '@/components/OnboardingTour';
-import { continueStory } from '@/lib/ai-story-generator';
-import StoryStarters, { StoryStarter } from '@/components/StoryStarters';
-import MusicPlayer from '@/components/MusicPlayer';
-import { LanguageSelector, useMultiLanguageTTS } from '@/components/LanguageSelector';
-import UndoRedoToolbar, { useUndoRedo } from '@/components/UndoRedoToolbar';
-import SpeechBubble from '@/components/SpeechBubble';
-import { useToast } from '@/components/Toast';
+import StoryGenerator from '@/components/modals/StoryGenerator';
+import EnhancedPlaybackViewer from '@/components/playback/EnhancedPlaybackViewer';
+import InteractiveSceneEditor, { EditableScene } from '@/components/editors/InteractiveSceneEditor';
+import VideoExporter from '@/components/modals/VideoExporter';
+import RiggedCharacter from '@/components/shared/RiggedCharacter';
+import AnimatedBackground from '@/components/shared/AnimatedBackground';
+import ParallaxBackground from '@/components/shared/ParallaxBackground';
+import { getCharacterRig, CHARACTER_RIGS } from '@/lib/utils/sprite-system';
+import { storyToEditableScenes, autoEnhanceScene, applyAutoDurations, aiSceneToEditableScene } from '@/lib/animation/story-animator';
+import type { AIStoryResponse } from '@/lib/ai/ai-types';
+import { VideoExportEngine, editableSceneToRenderData, type ExportProgress } from '@/lib/export/video-export-engine';
+import TTSSettingsPanel from '@/components/modals/TTSSettingsPanel';
+import { SCENE_TEMPLATES, applyTemplate } from '@/lib/utils/scene-templates';
+import CharacterCreatorModal from '@/components/modals/CharacterCreatorModal';
+import KeyboardShortcutsPanel from '@/components/modals/KeyboardShortcutsPanel';
+import SettingsPanel from '@/components/modals/SettingsPanel';
+import CollaborationPanel from '@/components/modals/CollaborationPanel';
+import { TransitionConfig, createDefaultTransition, TRANSITION_PRESETS } from '@/lib/utils/scene-transitions';
+import TransitionPicker from '@/components/ui/TransitionPicker';
+import { AutoSaveManager, loadProjectLocally, formatTimeAgo } from '@/lib/utils/auto-save';
+import { copyToClipboard, generateSceneThumbnail } from '@/lib/export/gif-export';
+import { suggestNextScene, analyzeEmotion, suggestBackgrounds } from '@/lib/ai/ai-suggestions';
+import OnboardingTour from '@/components/ui/OnboardingTour';
+import { continueStory } from '@/lib/ai/ai-story-generator';
+import StoryStarters, { StoryStarter } from '@/components/ui/StoryStarters';
+import MusicPlayer from '@/components/ui/MusicPlayer';
+import { LanguageSelector, useMultiLanguageTTS } from '@/components/ui/LanguageSelector';
+import UndoRedoToolbar, { useUndoRedo } from '@/components/ui/UndoRedoToolbar';
+import SpeechBubble from '@/components/shared/SpeechBubble';
+import { useToast } from '@/components/ui/Toast';
 
 // Background configurations
 const BACKGROUNDS = [

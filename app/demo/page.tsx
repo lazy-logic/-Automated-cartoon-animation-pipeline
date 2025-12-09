@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import AnimatedCharacterComponent from '@/components/AnimatedCharacter';
-import AnimationStage from '@/components/AnimationStage';
-import { ANIMATED_CHARACTERS } from '@/lib/characters';
+import AnimatedCharacterComponent from '@/components/shared/AnimatedCharacter';
+import AnimationStage from '@/components/shared/AnimationStage';
+import { ANIMATED_CHARACTERS } from '@/lib/utils/characters';
 import { 
   Play, 
   Pause, 
