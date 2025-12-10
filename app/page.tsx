@@ -1374,6 +1374,15 @@ export default function HomePage() {
                   )}
                 </div>
 
+                {/* Edit Button */}
+                <button
+                  onClick={() => handleEditScene(currentSceneIndex)}
+                  className="absolute top-2 right-2 z-50 p-1.5 bg-black/50 hover:bg-black/70 backdrop-blur-sm rounded-full transition-colors"
+                  title="Edit this scene"
+                >
+                  <Edit3 className="w-3.5 h-3.5 text-white" />
+                </button>
+
                 {/* Minimal Playback Controls */}
                 <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-50">
                   <div className="flex items-center gap-0.5 px-1 py-1 bg-black/50 backdrop-blur-sm rounded-full">

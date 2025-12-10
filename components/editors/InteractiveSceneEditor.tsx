@@ -385,1008 +385,391 @@ export default function InteractiveSceneEditor({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex"
+      className="fixed inset-0 bg-[#0a0a0f] z-50 flex overflow-hidden"
     >
-      {/* Main Stage Area */}
-      <div className="flex-1 flex flex-col">
-        {/* Top Bar */}
-        <div className="bg-gray-900 border-b border-gray-700 px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
-            >
-              <X className="w-5 h-5 text-gray-400" />
-            </button>
-            <div>
-              <input
-                type="text"
-                value={scene.title}
-                onChange={(e) => onSceneUpdate({ ...scene, title: e.target.value })}
-                className="bg-transparent text-white font-bold text-lg border-none focus:outline-none focus:ring-0"
-                placeholder="Scene Title"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {/* Undo/Redo */}
-            <div className="flex items-center gap-1 mr-2 border-r border-gray-700 pr-3">
-              <button
-                onClick={handleUndo}
-                disabled={!canUndo}
-                className={`p-2 rounded-lg transition-colors ${
-                  canUndo ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-gray-800 text-gray-600 cursor-not-allowed'
-                }`}
-                title="Undo (Ctrl+Z)"
-              >
-                <Undo2 className="w-4 h-4" />
-              </button>
-              <button
-                onClick={handleRedo}
-                disabled={!canRedo}
-                className={`p-2 rounded-lg transition-colors ${
-                  canRedo ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-gray-800 text-gray-600 cursor-not-allowed'
-                }`}
-                title="Redo (Ctrl+Y)"
-              >
-                <Redo2 className="w-4 h-4" />
-              </button>
-            </div>
-            
-            {/* Template Picker */}
-            <button
-              onClick={() => setShowTemplateModal(true)}
-              className="p-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors"
-              title="Apply Scene Template"
-            >
-              <LayoutTemplate className="w-5 h-5 text-white" />
-            </button>
-            
-            {/* Playback Controls */}
-            <button
-              onClick={togglePlay}
-              className={`p-2.5 rounded-lg transition-colors ${
-                isPlaying ? 'bg-red-500 text-white' : 'bg-green-500 text-white'
-              }`}
-            >
-              {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
-            </button>
-            <button
-              onClick={() => setIsMuted(!isMuted)}
-              className="p-2.5 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
-            >
-              {isMuted ? (
-                <VolumeX className="w-5 h-5 text-gray-400" />
-              ) : (
-                <Volume2 className="w-5 h-5 text-gray-400" />
-              )}
-            </button>
-            <button
-              onClick={onSave}
-              className="px-4 py-2.5 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors flex items-center gap-2"
-            >
-              <Save className="w-4 h-4" />
-              Save
-            </button>
-          </div>
-        </div>
-
-        {/* Stage */}
-        <div className="flex-1 p-6 flex items-center justify-center bg-gray-800">
-          <div
-            ref={stageRef}
-            className="relative w-full max-w-4xl aspect-video rounded-2xl overflow-hidden shadow-2xl cursor-crosshair"
-            style={{ background: bgConfig.gradient }}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseUp}
-            onClick={() => setSelectedCharacterId(null)}
-          >
-            {/* Camera Transform Container - applies zoom and pan */}
-            <div
-              className="absolute inset-0 transition-transform duration-300 ease-out"
-              style={{
-                transform: `scale(${scene.cameraZoom ?? 1}) translate(${-(scene.cameraPanX ?? 0)}%, ${-(scene.cameraPanY ?? 0)}%)`,
-                transformOrigin: 'center center',
-              }}
-            >
-            {/* Ground (subtle gradient so it doesn't feel like a solid block) */}
-            <div
-              className="absolute bottom-0 left-0 right-0 h-[22%]"
-              style={{
-                background: `linear-gradient(to top, ${bgConfig.groundColor}, transparent)`,
-                opacity: 0.8,
-              }}
-            />
-
-            {/* Sun/Moon */}
-            {scene.background !== 'night' && scene.background !== 'bedroom' && (
-              <div
-                className="absolute top-[10%] right-[15%] w-16 h-16 bg-yellow-200 rounded-full"
-                style={{ boxShadow: '0 0 60px 20px rgba(255, 255, 200, 0.5)' }}
-              />
-            )}
-            {scene.background === 'night' && (
-              <>
-                <div
-                  className="absolute top-[10%] right-[15%] w-12 h-12 bg-yellow-100 rounded-full"
-                  style={{ boxShadow: '0 0 30px 8px rgba(255, 255, 200, 0.3)' }}
-                />
-                {[...Array(15)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="absolute w-1 h-1 bg-white rounded-full animate-pulse"
-                    style={{
-                      top: `${10 + (i * 5) % 40}%`,
-                      left: `${5 + (i * 11) % 90}%`,
-                      animationDelay: `${i * 0.2}s`,
-                    }}
-                  />
-                ))}
-              </>
-            )}
-
-            {/* Characters */}
-            {scene.characters.map((char) => {
-              const rig = getCharacterRig(char.rigId);
-              if (!rig) return null;
-
-              const isSelected = char.id === selectedCharacterId;
-
-              return (
-                <div
-                  key={char.id}
-                  className={`absolute cursor-move transition-all ${
-                    isSelected ? 'ring-4 ring-purple-500 ring-offset-2 ring-offset-transparent rounded-lg' : ''
-                  }`}
-                  style={{
-                    left: `${char.x}%`,
-                    top: `${char.y}%`,
-                    transform: 'translate(-50%, -100%)',
-                    zIndex: char.zIndex + 10,
-                  }}
-                  onMouseDown={(e) => {
-                    e.stopPropagation();
-                    handleMouseDown(e, char.id);
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedCharacterId(char.id);
-                  }}
-                >
-                  <RiggedCharacter
-                    rig={rig}
-                    animation={char.animation}
-                    scale={char.scale}
-                    flipX={char.flipX}
-                    expression={char.expression}
-                    isTalking={char.isTalking}
-                    showExplorerGear={char.outfitExplorer}
-                    showBallProp={char.propBall}
-                    customColors={char.customColors}
-                    customAccessories={char.customAccessories}
-                  />
-                  {isSelected && (
-                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 px-2 py-1 bg-purple-500 text-white text-xs rounded-full whitespace-nowrap">
-                      {(characterRoleLabels && characterRoleLabels[char.rigId.toLowerCase()]) || char.name}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-
-            </div>{/* End Camera Transform Container */}
-
-            {/* Narration Box - outside camera transform so it stays fixed */}
-            {scene.narration && (
-              <div className="absolute bottom-4 left-4 right-4 px-6 py-4 bg-black/70 backdrop-blur-sm rounded-2xl z-50">
-                <p className="text-white text-center leading-relaxed">{scene.narration}</p>
-              </div>
-            )}
-
-            {/* Camera info overlay */}
-            <div className="absolute top-3 left-3 px-2 py-1 bg-black/50 rounded-lg text-[10px] text-white/70 font-mono z-50">
-              📷 {(scene.cameraZoom ?? 1).toFixed(1)}x | Pan: {scene.cameraPanX ?? 0}, {scene.cameraPanY ?? 0}
-            </div>
-          </div>
-        </div>
-
-        {/* Timeline */}
-        <div className="bg-gray-900 border-t border-gray-700 px-4 py-3">
-          <div className="flex items-center gap-4">
-            <Clock className="w-4 h-4 text-gray-500" />
-            <span className="text-gray-400 text-sm">Duration:</span>
-            <input
-              type="range"
-              min={2000}
-              max={15000}
-              step={500}
-              value={scene.duration}
-              onChange={(e) => onSceneUpdate({ ...scene, duration: Number(e.target.value) })}
-              className="flex-1 accent-purple-500"
-            />
-            <span className="text-white font-mono text-sm w-16">
-              {(scene.duration / 1000).toFixed(1)}s
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Right Panel */}
-      <div className="w-80 bg-gray-900 border-l border-gray-700 flex flex-col">
-        {/* Tabs */}
-        <div className="flex border-b border-gray-700">
+      {/* Left Sidebar - Tools */}
+      <div className="w-14 bg-[#12121a] border-r border-white/5 flex flex-col items-center py-3 gap-1">
+        <button onClick={onClose} className="p-2.5 hover:bg-white/5 rounded-xl transition-all mb-4" title="Close">
+          <X className="w-5 h-5 text-gray-400" />
+        </button>
+        
+        <div className="flex-1 flex flex-col items-center gap-1">
           {[
-            { id: 'characters', label: 'Characters', icon: Layers },
-            { id: 'scene', label: 'Scene', icon: Image },
-            { id: 'camera', label: 'Camera', icon: Camera },
-            { id: 'timing', label: 'Timing', icon: Zap },
-            { id: 'audio', label: 'Audio', icon: Music },
+            { id: 'characters', icon: Layers, label: 'Characters' },
+            { id: 'scene', icon: Image, label: 'Scene' },
+            { id: 'camera', icon: Camera, label: 'Camera' },
+            { id: 'timing', icon: Zap, label: 'Timing' },
+            { id: 'audio', icon: Music, label: 'Audio' },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`flex-1 px-4 py-3 text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
-                activeTab === tab.id
-                  ? 'text-purple-400 border-b-2 border-purple-400 bg-gray-800'
-                  : 'text-gray-500 hover:text-gray-300'
+              className={`p-2.5 rounded-xl transition-all ${
+                activeTab === tab.id 
+                  ? 'bg-purple-500/20 text-purple-400' 
+                  : 'hover:bg-white/5 text-gray-500 hover:text-gray-300'
               }`}
+              title={tab.label}
             >
-              <tab.icon className="w-4 h-4" />
-              {tab.label}
+              <tab.icon className="w-5 h-5" />
             </button>
           ))}
         </div>
 
-        {/* Panel Content */}
-        <div className="flex-1 overflow-y-auto p-4">
-          {activeTab === 'characters' && (
-            <div className="space-y-4">
-              {/* Add Character */}
-              <div>
-                <h3 className="text-white font-medium mb-2">Add Character</h3>
-                <div className="grid grid-cols-2 gap-2">
-                  {CHARACTER_RIGS.map((rig) => (
-                    <button
-                      key={rig.id}
-                      onClick={() => addCharacter(rig.id)}
-                      className="p-3 bg-gray-800 hover:bg-gray-700 rounded-xl transition-colors text-left"
-                    >
-                      <div
-                        className="w-8 h-8 rounded-full mb-2"
-                        style={{ backgroundColor: rig.colors.primary }}
-                      />
-                      <div className="text-white text-sm font-medium">{rig.name}</div>
-                      <div className="text-gray-500 text-xs">{rig.category}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
+        <div className="flex flex-col items-center gap-1 pt-2 border-t border-white/5">
+          <button onClick={handleUndo} disabled={!canUndo} className={`p-2.5 rounded-xl transition-all ${canUndo ? 'hover:bg-white/5 text-gray-400' : 'text-gray-700'}`} title="Undo">
+            <Undo2 className="w-5 h-5" />
+          </button>
+          <button onClick={handleRedo} disabled={!canRedo} className={`p-2.5 rounded-xl transition-all ${canRedo ? 'hover:bg-white/5 text-gray-400' : 'text-gray-700'}`} title="Redo">
+            <Redo2 className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
 
-              {/* Selected Character Controls */}
-              {selectedCharacter && (
-                <div className="space-y-4 pt-4 border-t border-gray-700">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-white font-medium">{selectedCharacter.name}</h3>
-                    <button
-                      onClick={() => removeCharacter(selectedCharacter.id)}
-                      className="p-1.5 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col">
+        {/* Top Bar */}
+        <div className="h-12 bg-[#12121a] border-b border-white/5 px-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <input
+              type="text"
+              value={scene.title}
+              onChange={(e) => onSceneUpdate({ ...scene, title: e.target.value })}
+              className="bg-transparent text-white font-semibold border-none focus:outline-none text-sm"
+              placeholder="Scene Title"
+            />
+            <span className="text-xs text-gray-600">•</span>
+            <span className="text-xs text-gray-500">{(scene.duration / 1000).toFixed(1)}s</span>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <button onClick={togglePlay} className={`px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all ${isPlaying ? 'bg-red-500/10 text-red-400 hover:bg-red-500/20' : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20'}`}>
+              {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
+              {isPlaying ? 'Stop' : 'Preview'}
+            </button>
+            <button onClick={onSave} className="px-4 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-medium rounded-lg flex items-center gap-1.5 transition-all">
+              <Save className="w-3.5 h-3.5" />
+              Save & Close
+            </button>
+          </div>
+        </div>
 
-                  {/* Position */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-gray-400 text-xs flex items-center gap-1 mb-1">
-                        <Move className="w-3 h-3" /> X Position
-                      </label>
-                      <input
-                        type="range"
-                        min={5}
-                        max={95}
-                        value={selectedCharacter.x}
-                        onChange={(e) =>
-                          updateCharacter(selectedCharacter.id, { x: Number(e.target.value) })
-                        }
-                        className="w-full accent-purple-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-gray-400 text-xs mb-1 block">Y Position</label>
-                      <input
-                        type="range"
-                        min={20}
-                        max={90}
-                        value={selectedCharacter.y}
-                        onChange={(e) =>
-                          updateCharacter(selectedCharacter.id, { y: Number(e.target.value) })
-                        }
-                        className="w-full accent-purple-500"
-                      />
-                    </div>
-                  </div>
+        {/* Canvas Area */}
+        <div className="flex-1 flex">
+          {/* Preview Canvas */}
+          <div className="flex-1 p-6 flex items-center justify-center bg-[#0a0a0f]">
+            <div className="relative">
+              {/* Canvas Frame */}
+              <div
+                ref={stageRef}
+                className="relative w-[640px] aspect-video rounded-lg overflow-hidden shadow-2xl cursor-crosshair ring-1 ring-white/10"
+                style={{ background: bgConfig.gradient }}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                onClick={() => setSelectedCharacterId(null)}
+              >
+                {/* Camera Transform */}
+                <div
+                  className="absolute inset-0 transition-transform duration-300"
+                  style={{
+                    transform: `scale(${scene.cameraZoom ?? 1}) translate(${-(scene.cameraPanX ?? 0)}%, ${-(scene.cameraPanY ?? 0)}%)`,
+                    transformOrigin: 'center center',
+                  }}
+                >
+                  <div className="absolute bottom-0 left-0 right-0 h-[22%]" style={{ background: `linear-gradient(to top, ${bgConfig.groundColor}, transparent)`, opacity: 0.8 }} />
+                  
+                  {scene.background !== 'night' && scene.background !== 'bedroom' && (
+                    <div className="absolute top-[10%] right-[15%] w-10 h-10 bg-yellow-200 rounded-full" style={{ boxShadow: '0 0 30px 10px rgba(255, 255, 200, 0.4)' }} />
+                  )}
 
-                  {/* Scale */}
-                  <div>
-                    <label className="text-gray-400 text-xs mb-1 block">
-                      Scale: {selectedCharacter.scale.toFixed(1)}x
-                    </label>
-                    <input
-                      type="range"
-                      min={0.5}
-                      max={2}
-                      step={0.1}
-                      value={selectedCharacter.scale}
-                      onChange={(e) =>
-                        updateCharacter(selectedCharacter.id, { scale: Number(e.target.value) })
-                      }
-                      className="w-full accent-purple-500"
-                    />
-                  </div>
-
-                  {/* Flip */}
-                  <button
-                    onClick={() =>
-                      updateCharacter(selectedCharacter.id, { flipX: !selectedCharacter.flipX })
-                    }
-                    className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
-                      selectedCharacter.flipX
-                        ? 'bg-purple-500/30 text-purple-300'
-                        : 'bg-gray-700 text-gray-300'
-                    }`}
-                  >
-                    <FlipHorizontal className="w-4 h-4" />
-                    Flip Horizontal
-                  </button>
-
-                  {/* Animation */}
-                  <div>
-                    <label className="text-gray-400 text-xs mb-2 block">Animation</label>
-                    <div className="grid grid-cols-3 gap-1">
-                      {ANIMATIONS.map((anim) => (
-                        <button
-                          key={anim}
-                          onClick={() => updateCharacter(selectedCharacter.id, { animation: anim })}
-                          className={`px-2 py-1.5 rounded-lg text-xs capitalize transition-colors ${
-                            selectedCharacter.animation === anim
-                              ? 'bg-purple-500 text-white'
-                              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                          }`}
-                        >
-                          {anim}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Expression */}
-                  <div>
-                    <div className="text-gray-500 text-xs mb-2 flex items-center gap-1">
-                      <Smile className="w-3 h-3" /> Expression
-                    </div>
-                    <div className="grid grid-cols-3 gap-1">
-                      {EXPRESSIONS.map((expr) => (
-                        <button
-                          key={expr}
-                          onClick={() => updateCharacter(selectedCharacter.id, { expression: expr })}
-                          className={`px-2 py-1.5 rounded-lg text-xs capitalize transition-colors ${
-                            selectedCharacter.expression === expr
-                              ? 'bg-purple-500 text-white'
-                              : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                          }`}
-                        >
-                          {expr}
-                        </button>
-                      ))}
-                    </div>
-                    {primarySuggestion && (
-                      <div className="mt-1 text-[11px] text-purple-300">
-                        Suggested: {primarySuggestion.suggestedAction} 
-                        
-                        <span className="mx-1">•</span>
-                        {primarySuggestion.suggestedExpression}
-                        <button
-                          onClick={() =>
-                            updateCharacter(selectedCharacter.id, {
-                              animation: primarySuggestion.suggestedAction,
-                              expression: primarySuggestion.suggestedExpression as any,
-                              isTalking: primarySuggestion.isTalking,
-                            })
-                          }
-                          className="ml-2 px-2 py-0.5 rounded-full bg-purple-600/60 text-[10px] text-white hover:bg-purple-600"
-                        >
-                          Apply
-                        </button>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Outfit & Props (per-scene) */}
-                  {(() => {
-                    const rig = getCharacterRig(selectedCharacter.rigId);
+                  {scene.characters.map((char) => {
+                    const rig = getCharacterRig(char.rigId);
                     if (!rig) return null;
-                    const rigId = rig.id.toLowerCase();
-                    const isKiara = rigId === 'kiara';
-                    const isJayden = rigId === 'jayden';
-                    if (!isKiara && !isJayden) return null;
-
-                    const explorerOn =
-                      selectedCharacter.outfitExplorer ?? isKiara;
-                    const ballOn = selectedCharacter.propBall ?? isJayden;
-
+                    const isSelected = char.id === selectedCharacterId;
                     return (
-                      <div className="mt-2 space-y-2">
-                        <div className="text-gray-500 text-xs mb-1">Outfit & Props</div>
-                        {isKiara && (
-                          <button
-                            onClick={() =>
-                              updateCharacter(selectedCharacter.id, {
-                                outfitExplorer: !explorerOn,
-                              })
-                            }
-                            className={`w-full px-3 py-1.5 rounded-lg text-xs flex items-center justify-between transition-colors ${
-                              explorerOn
-                                ? 'bg-purple-500 text-white'
-                                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                            }`}
-                          >
-                            <span>Explorer gear</span>
-                            <span className="text-[10px] uppercase tracking-wide">
-                              {explorerOn ? 'On' : 'Off'}
-                            </span>
-                          </button>
-                        )}
-                        {isJayden && (
-                          <button
-                            onClick={() =>
-                              updateCharacter(selectedCharacter.id, {
-                                propBall: !ballOn,
-                              })
-                            }
-                            className={`w-full px-3 py-1.5 rounded-lg text-xs flex items-center justify-between transition-colors ${
-                              ballOn
-                                ? 'bg-purple-500 text-white'
-                                : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                            }`}
-                          >
-                            <span>Soccer ball</span>
-                            <span className="text-[10px] uppercase tracking-wide">
-                              {ballOn ? 'On' : 'Off'}
-                            </span>
-                          </button>
-                        )}
-                      </div>
-                    );
-                  })()}
-                </div>
-              )}
-
-              {/* Character List */}
-              {scene.characters.length > 0 && (
-                <div className="pt-4 border-t border-gray-700">
-                  <h3 className="text-white font-medium mb-2">Scene Characters</h3>
-                  <div className="space-y-2">
-                    {scene.characters.map((char) => (
-                      <button
-                        key={char.id}
-                        onClick={() => setSelectedCharacterId(char.id)}
-                        className={`w-full p-3 rounded-xl text-left transition-colors flex items-center gap-3 ${
-                          char.id === selectedCharacterId
-                            ? 'bg-purple-500/30 border border-purple-500'
-                            : 'bg-gray-800 hover:bg-gray-700'
-                        }`}
-                      >
-                        <div
-                          className="w-8 h-8 rounded-full"
-                          style={{
-                            backgroundColor: getCharacterRig(char.rigId)?.colors.primary || '#888',
-                          }}
-                        />
-                        <div>
-                          <div className="text-white text-sm font-medium">
-                            {(characterRoleLabels && characterRoleLabels[char.rigId.toLowerCase()]) || char.name}
-                          </div>
-                          <div className="text-gray-500 text-xs capitalize">{char.animation}</div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {activeTab === 'scene' && (
-            <div className="space-y-4">
-              {/* Background */}
-              <div>
-                <h3 className="text-white font-medium mb-2">Background</h3>
-                <div className="grid grid-cols-2 gap-2">
-                  {Object.entries(BACKGROUNDS).map(([id, bg]) => (
-                    <button
-                      key={id}
-                      onClick={() => onSceneUpdate({ ...scene, background: id })}
-                      className={`p-3 rounded-xl transition-colors ${
-                        scene.background === id
-                          ? 'ring-2 ring-purple-500'
-                          : 'hover:ring-2 hover:ring-gray-600'
-                      }`}
-                    >
                       <div
-                        className="w-full h-12 rounded-lg mb-2"
-                        style={{ background: bg.gradient }}
-                      />
-                      <div className="text-white text-xs capitalize">{id}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Narration */}
-              <div>
-                <h3 className="text-white font-medium mb-2">Narration</h3>
-                <textarea
-                  value={scene.narration}
-                  onChange={(e) => onSceneUpdate({ ...scene, narration: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-xl text-white text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
-                  rows={4}
-                  placeholder="Enter narration text..."
-                />
-                <button
-                  onClick={speakNarration}
-                  className="mt-2 w-full px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg transition-colors flex items-center justify-center gap-2"
-                >
-                  <Volume2 className="w-4 h-4" />
-                  Preview Narration
-                </button>
-                <button
-                  onClick={handleResyncActing}
-                  className="mt-2 w-full px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm rounded-lg transition-colors"
-                >
-                  Re-sync acting to narration
-                </button>
-              </div>
-
-              {scene.dialogue && scene.dialogue.length > 0 && (
-                <div>
-                  <h3 className="text-white font-medium mb-2 mt-4">Dialogue Acting Presets</h3>
-                  <div className="space-y-2">
-                    {scene.dialogue.map((line, index) => {
-                      const text = line.text || '';
-                      if (!text.trim()) return null;
-                      const analysis = analyzeNarrationForActions(text);
-                      const suggestion = analysis[0];
-                      const speakerName = (line.speaker || '').toLowerCase();
-                      const targetChar = scene.characters.find(
-                        (c) => c.name.toLowerCase() === speakerName
-                      ) || scene.characters[0];
-
-                      return (
-                        <div key={index} className="p-2 bg-gray-800 rounded-lg text-xs text-gray-200">
-                          <div className="flex justify-between items-center mb-1">
-                            <span className="font-semibold text-white">{line.speaker || 'Narrator'}</span>
-                            {targetChar && suggestion && (
-                              <button
-                                onClick={() =>
-                                  updateCharacter(targetChar.id, {
-                                    animation: suggestion.suggestedAction,
-                                    expression: suggestion.suggestedExpression as any,
-                                    isTalking: suggestion.isTalking,
-                                  })
-                                }
-                                className="px-2 py-0.5 rounded-full bg-purple-600/70 text-[10px] text-white hover:bg-purple-600"
-                              >
-                                Apply
-                              </button>
-                            )}
-                          </div>
-                          <div className="text-gray-300 truncate mb-1">{text}</div>
-                          {suggestion && (
-                            <div className="text-[11px] text-purple-300">
-                              Suggested: {suggestion.suggestedAction}
-                              <span className="mx-1">•</span>
-                              {suggestion.suggestedExpression}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-            </div>
-          )}
-
-          {activeTab === 'camera' && (
-            <div className="space-y-4">
-              {/* Camera Preview */}
-              <div className="p-4 bg-gray-800 rounded-xl">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-white font-medium flex items-center gap-2">
-                    <Camera className="w-4 h-4" />
-                    Camera Settings
-                  </h3>
-                  <button
-                    onClick={() => onSceneUpdate({ ...scene, cameraZoom: 1, cameraPanX: 0, cameraPanY: 0 })}
-                    className="text-xs text-gray-400 hover:text-white transition-colors"
-                  >
-                    Reset
-                  </button>
-                </div>
-                
-                {/* Visual camera indicator */}
-                <div className="relative w-full aspect-video bg-gray-900 rounded-lg overflow-hidden mb-3">
-                  <div 
-                    className="absolute inset-0 border-2 border-purple-500/50 transition-all duration-300"
-                    style={{
-                      transform: `scale(${1/(scene.cameraZoom ?? 1)}) translate(${(scene.cameraPanX ?? 0) * (scene.cameraZoom ?? 1)}%, ${(scene.cameraPanY ?? 0) * (scene.cameraZoom ?? 1)}%)`,
-                    }}
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Focus className="w-6 h-6 text-purple-400/50" />
-                  </div>
-                  <div className="absolute bottom-1 right-1 text-[10px] text-gray-500 font-mono">
-                    {(scene.cameraZoom ?? 1).toFixed(1)}x
-                  </div>
-                </div>
-              </div>
-
-              {/* Zoom Control */}
-              <div className="p-4 bg-gray-800 rounded-xl">
-                <div className="flex items-center justify-between mb-2">
-                  <label className="text-gray-300 text-sm flex items-center gap-2">
-                    <ZoomIn className="w-4 h-4" />
-                    Zoom
-                  </label>
-                  <span className="text-purple-400 font-mono text-sm">{(scene.cameraZoom ?? 1).toFixed(1)}x</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => onSceneUpdate({ ...scene, cameraZoom: Math.max(0.5, (scene.cameraZoom ?? 1) - 0.1) })}
-                    className="p-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
-                  >
-                    <ZoomOut className="w-4 h-4 text-gray-300" />
-                  </button>
-                  <input
-                    type="range"
-                    min={0.5}
-                    max={2.5}
-                    step={0.1}
-                    value={scene.cameraZoom ?? 1}
-                    onChange={(e) => onSceneUpdate({ ...scene, cameraZoom: Number(e.target.value) })}
-                    className="flex-1 accent-purple-500"
-                  />
-                  <button
-                    onClick={() => onSceneUpdate({ ...scene, cameraZoom: Math.min(2.5, (scene.cameraZoom ?? 1) + 0.1) })}
-                    className="p-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
-                  >
-                    <ZoomIn className="w-4 h-4 text-gray-300" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Pan Controls */}
-              <div className="p-4 bg-gray-800 rounded-xl">
-                <div className="flex items-center justify-between mb-3">
-                  <label className="text-gray-300 text-sm flex items-center gap-2">
-                    <Move className="w-4 h-4" />
-                    Pan Position
-                  </label>
-                  <span className="text-gray-500 font-mono text-xs">
-                    X: {scene.cameraPanX ?? 0} | Y: {scene.cameraPanY ?? 0}
-                  </span>
-                </div>
-                
-                {/* Pan grid control */}
-                <div className="relative w-full aspect-square max-w-[160px] mx-auto bg-gray-900 rounded-lg mb-3">
-                  <div className="absolute inset-0 grid grid-cols-3 grid-rows-3">
-                    {[
-                      { x: -25, y: -25 }, { x: 0, y: -25 }, { x: 25, y: -25 },
-                      { x: -25, y: 0 }, { x: 0, y: 0 }, { x: 25, y: 0 },
-                      { x: -25, y: 25 }, { x: 0, y: 25 }, { x: 25, y: 25 },
-                    ].map((pos, i) => (
-                      <button
-                        key={i}
-                        onClick={() => onSceneUpdate({ ...scene, cameraPanX: pos.x, cameraPanY: pos.y })}
-                        className={`border border-gray-700 hover:bg-purple-500/30 transition-colors ${
-                          scene.cameraPanX === pos.x && scene.cameraPanY === pos.y
-                            ? 'bg-purple-500/50'
-                            : ''
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  {/* Current position indicator */}
-                  <div
-                    className="absolute w-3 h-3 bg-purple-500 rounded-full border-2 border-white pointer-events-none transition-all duration-200"
-                    style={{
-                      left: `${50 + (scene.cameraPanX ?? 0)}%`,
-                      top: `${50 + (scene.cameraPanY ?? 0)}%`,
-                      transform: 'translate(-50%, -50%)',
-                    }}
-                  />
-                </div>
-
-                {/* Fine-tune sliders */}
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <span className="text-gray-500 text-xs w-8">X:</span>
-                    <input
-                      type="range"
-                      min={-50}
-                      max={50}
-                      value={scene.cameraPanX ?? 0}
-                      onChange={(e) => onSceneUpdate({ ...scene, cameraPanX: Number(e.target.value) })}
-                      className="flex-1 accent-purple-500"
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-gray-500 text-xs w-8">Y:</span>
-                    <input
-                      type="range"
-                      min={-50}
-                      max={50}
-                      value={scene.cameraPanY ?? 0}
-                      onChange={(e) => onSceneUpdate({ ...scene, cameraPanY: Number(e.target.value) })}
-                      className="flex-1 accent-purple-500"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Shot Presets */}
-              <div>
-                <h3 className="text-white font-medium mb-3 flex items-center gap-2">
-                  <Sparkles className="w-4 h-4" />
-                  Shot Presets
-                </h3>
-                <div className="grid grid-cols-2 gap-2">
-                  {[
-                    { id: 'wide', label: 'Wide Shot', desc: 'Full scene', zoom: 1, panX: 0, panY: 0, icon: '🎬' },
-                    { id: 'medium', label: 'Medium', desc: 'Waist up', zoom: 1.3, panX: 0, panY: -10, icon: '👤' },
-                    { id: 'closeup', label: 'Close-up', desc: 'Face focus', zoom: 1.8, panX: 0, panY: -20, icon: '😊' },
-                    { id: 'extreme', label: 'Extreme CU', desc: 'Eyes/detail', zoom: 2.2, panX: 0, panY: -25, icon: '👁️' },
-                    { id: 'over-shoulder', label: 'Over Shoulder', desc: 'Dialogue', zoom: 1.4, panX: 20, panY: -5, icon: '💬' },
-                    { id: 'low-angle', label: 'Low Angle', desc: 'Powerful', zoom: 1.2, panX: 0, panY: 15, icon: '⬆️' },
-                    { id: 'high-angle', label: 'High Angle', desc: 'Vulnerable', zoom: 1.2, panX: 0, panY: -15, icon: '⬇️' },
-                    { id: 'dutch', label: 'Dutch Tilt', desc: 'Tension', zoom: 1.1, panX: 10, panY: -5, icon: '↗️' },
-                  ].map((preset) => {
-                    const isActive = 
-                      Math.abs((scene.cameraZoom ?? 1) - preset.zoom) < 0.05 &&
-                      Math.abs((scene.cameraPanX ?? 0) - preset.panX) < 3 &&
-                      Math.abs((scene.cameraPanY ?? 0) - preset.panY) < 3;
-                    
-                    return (
-                      <button
-                        key={preset.id}
-                        onClick={() =>
-                          onSceneUpdate({
-                            ...scene,
-                            cameraZoom: preset.zoom,
-                            cameraPanX: preset.panX,
-                            cameraPanY: preset.panY,
-                          })
-                        }
-                        className={`p-3 rounded-xl text-left transition-all ${
-                          isActive
-                            ? 'bg-purple-500/30 ring-2 ring-purple-500'
-                            : 'bg-gray-800 hover:bg-gray-700'
-                        }`}
+                        key={char.id}
+                        className={`absolute cursor-move transition-shadow ${isSelected ? 'drop-shadow-[0_0_8px_rgba(168,85,247,0.5)]' : ''}`}
+                        style={{ left: `${char.x}%`, top: `${char.y}%`, transform: 'translate(-50%, -100%)', zIndex: char.zIndex + 10 }}
+                        onMouseDown={(e) => { e.stopPropagation(); handleMouseDown(e, char.id); }}
+                        onClick={(e) => { e.stopPropagation(); setSelectedCharacterId(char.id); }}
                       >
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-lg">{preset.icon}</span>
-                          <span className="text-white text-sm font-medium">{preset.label}</span>
-                        </div>
-                        <div className="text-gray-400 text-[10px]">{preset.desc}</div>
-                      </button>
+                        <RiggedCharacter rig={rig} animation={char.animation} scale={char.scale * 0.8} flipX={char.flipX} expression={char.expression} isTalking={char.isTalking} showExplorerGear={char.outfitExplorer} showBallProp={char.propBall} customColors={char.customColors} customAccessories={char.customAccessories} />
+                      </div>
                     );
                   })}
                 </div>
               </div>
 
-              {/* Focus on Character */}
-              {scene.characters.length > 0 && (
-                <div>
-                  <h3 className="text-white font-medium mb-2 flex items-center gap-2">
-                    <Focus className="w-4 h-4" />
-                    Focus on Character
-                  </h3>
-                  <div className="space-y-2">
-                    {scene.characters.map((char) => (
+              {/* Canvas Controls */}
+              <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-[#1a1a24] rounded-full px-2 py-1.5 ring-1 ring-white/5">
+                <button onClick={() => onSceneUpdate({ ...scene, cameraZoom: Math.max(0.5, (scene.cameraZoom ?? 1) - 0.2) })} className="p-1.5 hover:bg-white/5 rounded-full transition-all text-gray-400">
+                  <ZoomOut className="w-4 h-4" />
+                </button>
+                <span className="text-xs text-gray-500 font-mono w-10 text-center">{((scene.cameraZoom ?? 1) * 100).toFixed(0)}%</span>
+                <button onClick={() => onSceneUpdate({ ...scene, cameraZoom: Math.min(2.5, (scene.cameraZoom ?? 1) + 0.2) })} className="p-1.5 hover:bg-white/5 rounded-full transition-all text-gray-400">
+                  <ZoomIn className="w-4 h-4" />
+                </button>
+                <div className="w-px h-4 bg-white/10 mx-1" />
+                <button onClick={() => onSceneUpdate({ ...scene, cameraZoom: 1, cameraPanX: 0, cameraPanY: 0 })} className="p-1.5 hover:bg-white/5 rounded-full transition-all text-gray-400" title="Reset">
+                  <RotateCcw className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Panel - Properties */}
+          <div className="w-72 bg-[#12121a] border-l border-white/5 flex flex-col">
+            {/* Panel Header */}
+            <div className="h-10 px-4 flex items-center border-b border-white/5">
+              <span className="text-xs font-medium text-gray-400 uppercase tracking-wider">
+                {activeTab === 'characters' ? 'Characters' : activeTab === 'scene' ? 'Scene Settings' : activeTab === 'camera' ? 'Camera' : activeTab === 'timing' ? 'Timing' : 'Audio'}
+              </span>
+            </div>
+
+            {/* Panel Content */}
+            <div className="flex-1 overflow-y-auto p-3">
+              {activeTab === 'characters' && (
+                <div className="space-y-3">
+                  {/* Add Character */}
+                  <div className="grid grid-cols-3 gap-1.5">
+                    {CHARACTER_RIGS.map((rig) => (
                       <button
-                        key={char.id}
-                        onClick={() => {
-                          // Calculate pan to center on character
-                          const panX = 50 - char.x;
-                          const panY = 50 - char.y;
-                          onSceneUpdate({
-                            ...scene,
-                            cameraZoom: 1.5,
-                            cameraPanX: Math.max(-50, Math.min(50, panX)),
-                            cameraPanY: Math.max(-50, Math.min(50, panY)),
-                          });
-                        }}
-                        className="w-full p-3 bg-gray-800 hover:bg-gray-700 rounded-xl text-left transition-colors flex items-center gap-3"
+                        key={rig.id}
+                        onClick={() => addCharacter(rig.id)}
+                        className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-all text-center group"
                       >
-                        <div
-                          className="w-8 h-8 rounded-full"
-                          style={{ backgroundColor: getCharacterRig(char.rigId)?.colors.primary || '#888' }}
-                        />
-                        <div>
-                          <div className="text-white text-sm">{char.name}</div>
-                          <div className="text-gray-500 text-xs">Position: {char.x.toFixed(0)}%, {char.y.toFixed(0)}%</div>
-                        </div>
+                        <div className="w-6 h-6 rounded-full mx-auto mb-1 ring-2 ring-white/10 group-hover:ring-purple-500/50 transition-all" style={{ backgroundColor: rig.colors.primary }} />
+                        <div className="text-[10px] text-gray-400 truncate">{rig.name}</div>
                       </button>
                     ))}
                   </div>
-                </div>
-              )}
-              
-              {/* Camera Keyframe Animation */}
-              <div className="mt-4 pt-4 border-t border-gray-700">
-                <h3 className="text-white font-medium mb-3 flex items-center gap-2">
-                  <Sparkles className="w-4 h-4" />
-                  Camera Animation
-                </h3>
-                <p className="text-gray-400 text-xs mb-3">
-                  Add keyframes to animate camera movement during the scene.
-                </p>
-                <div className="bg-gray-800 rounded-xl overflow-hidden">
-                  <CameraKeyframeEditor
-                    keyframes={cameraKeyframes}
-                    duration={scene.duration}
-                    currentTime={cameraCurrentTime}
-                    onKeyframesChange={(newKeyframes) => {
-                      setCameraKeyframes(newKeyframes);
-                      // Apply first keyframe values to scene if exists
-                      if (newKeyframes.length > 0) {
-                        const first = newKeyframes[0];
-                        onSceneUpdate({
-                          ...scene,
-                          cameraZoom: first.zoom,
-                          cameraPanX: first.panX,
-                          cameraPanY: first.panY,
-                        });
-                      }
-                    }}
-                    onSeek={setCameraCurrentTime}
-                    onPreview={(state) => {
-                      // Live preview camera state
-                      onSceneUpdate({
-                        ...scene,
-                        cameraZoom: state.zoom,
-                        cameraPanX: state.panX,
-                        cameraPanY: state.panY,
-                      });
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
 
-          {activeTab === 'timing' && (
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-white font-medium mb-2">Scene Duration</h3>
-                <div className="p-4 bg-gray-800 rounded-xl">
-                  <div className="text-3xl font-bold text-white text-center mb-2">
-                    {(scene.duration / 1000).toFixed(1)}s
-                  </div>
-                  <input
-                    type="range"
-                    min={2000}
-                    max={15000}
-                    step={500}
-                    value={scene.duration}
-                    onChange={(e) => onSceneUpdate({ ...scene, duration: Number(e.target.value) })}
-                    className="w-full accent-purple-500"
-                  />
-                </div>
-              </div>
+                  {/* Selected Character */}
+                  {selectedCharacter && (
+                    <div className="space-y-3 pt-3 border-t border-white/5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-white">{selectedCharacter.name}</span>
+                        <button onClick={() => removeCharacter(selectedCharacter.id)} className="p-1 hover:bg-red-500/20 rounded text-red-400 transition-all">
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
 
-              <div>
-                <h3 className="text-white font-medium mb-2">Animation Presets</h3>
-                <div className="space-y-2">
-                  {Object.keys(ANIMATION_PRESETS).slice(0, 8).map((preset) => (
-                    <div
-                      key={preset}
-                      className="p-3 bg-gray-800 rounded-xl flex items-center justify-between"
-                    >
-                      <div>
-                        <div className="text-white text-sm capitalize">{preset}</div>
-                        <div className="text-gray-500 text-xs">
-                          {ANIMATION_PRESETS[preset].duration}ms
-                          {ANIMATION_PRESETS[preset].loop && ' • Loop'}
+                      {/* Position */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] text-gray-500 uppercase">Position</span>
+                          <span className="text-[10px] text-gray-600 font-mono">{selectedCharacter.x.toFixed(0)}, {selectedCharacter.y.toFixed(0)}</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <input type="range" min={5} max={95} value={selectedCharacter.x} onChange={(e) => updateCharacter(selectedCharacter.id, { x: Number(e.target.value) })} className="w-full accent-purple-500 h-1" />
+                          <input type="range" min={20} max={90} value={selectedCharacter.y} onChange={(e) => updateCharacter(selectedCharacter.id, { y: Number(e.target.value) })} className="w-full accent-purple-500 h-1" />
                         </div>
                       </div>
-                      <button
-                        onClick={() => {
-                          if (selectedCharacter) {
-                            updateCharacter(selectedCharacter.id, { animation: preset });
-                          }
-                        }}
-                        disabled={!selectedCharacter}
-                        className="px-3 py-1 bg-purple-500 hover:bg-purple-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-white text-xs rounded-lg transition-colors"
-                      >
-                        Apply
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
 
-          {activeTab === 'audio' && (
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-white font-medium mb-2 flex items-center gap-2">
-                  <Music className="w-4 h-4" />
-                  Audio Timeline
-                </h3>
-                <p className="text-gray-400 text-sm mb-3">
-                  Drag tracks to reposition. Click timeline to seek.
-                </p>
-              </div>
-              
-              {/* Embedded Audio Timeline */}
-              <div className="bg-gray-800 rounded-xl overflow-hidden">
-                <AudioTimeline
-                  tracks={audioTracks}
-                  duration={scene.duration}
-                  currentTime={audioCurrentTime}
-                  isPlaying={isAudioPlaying}
-                  onTracksChange={setAudioTracks}
-                  onSeek={setAudioCurrentTime}
-                  onPlayPause={() => setIsAudioPlaying(!isAudioPlaying)}
-                />
-              </div>
-              
-              {/* Quick Add Tracks */}
-              <div className="p-3 bg-gray-800 rounded-xl">
-                <div className="text-white text-sm font-medium mb-2">Quick Add</div>
-                <div className="grid grid-cols-2 gap-2">
-                  {(['narration', 'music', 'sfx', 'ambient'] as const).map((type) => (
-                    <button
-                      key={type}
-                      onClick={() => {
-                        const newTrack: AudioTrack = {
-                          id: `${type}-${Date.now()}`,
-                          name: type === 'narration' ? 'Narration' : type === 'music' ? 'Background Music' : type === 'sfx' ? 'Sound Effect' : 'Ambient',
-                          type,
-                          text: type === 'narration' ? scene.narration : undefined,
-                          startTime: 0,
-                          duration: type === 'sfx' ? 1000 : Math.min(scene.duration * 0.8, 5000),
-                          volume: type === 'ambient' ? 0.3 : 0.8,
-                          muted: false,
-                          locked: false,
-                          color: type === 'narration' ? '#3B82F6' : type === 'music' ? '#8B5CF6' : type === 'sfx' ? '#F59E0B' : '#10B981',
-                        };
-                        setAudioTracks([...audioTracks, newTrack]);
-                      }}
-                      className="px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-xs text-gray-300 capitalize transition-colors"
-                    >
-                      + {type}
+                      {/* Scale & Flip */}
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1">
+                          <span className="text-[10px] text-gray-500 uppercase">Scale</span>
+                          <input type="range" min={0.5} max={2} step={0.1} value={selectedCharacter.scale} onChange={(e) => updateCharacter(selectedCharacter.id, { scale: Number(e.target.value) })} className="w-full accent-purple-500 h-1" />
+                        </div>
+                        <button onClick={() => updateCharacter(selectedCharacter.id, { flipX: !selectedCharacter.flipX })} className={`p-2 rounded-lg transition-all ${selectedCharacter.flipX ? 'bg-purple-500/20 text-purple-400' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}>
+                          <FlipHorizontal className="w-4 h-4" />
+                        </button>
+                      </div>
+
+                      {/* Animation */}
+                      <div>
+                        <span className="text-[10px] text-gray-500 uppercase block mb-1.5">Animation</span>
+                        <div className="flex flex-wrap gap-1">
+                          {ANIMATIONS.slice(0, 8).map((anim) => (
+                            <button
+                              key={anim}
+                              onClick={() => updateCharacter(selectedCharacter.id, { animation: anim })}
+                              className={`px-2 py-1 rounded text-[10px] transition-all ${selectedCharacter.animation === anim ? 'bg-purple-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+                            >
+                              {anim}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Expression */}
+                      <div>
+                        <span className="text-[10px] text-gray-500 uppercase block mb-1.5">Expression</span>
+                        <div className="flex gap-1">
+                          {EXPRESSIONS.map((expr) => (
+                            <button
+                              key={expr}
+                              onClick={() => updateCharacter(selectedCharacter.id, { expression: expr })}
+                              className={`flex-1 py-1.5 rounded text-[10px] transition-all ${selectedCharacter.expression === expr ? 'bg-purple-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
+                            >
+                              {expr}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Scene Characters List */}
+                  {scene.characters.length > 0 && (
+                    <div className="pt-3 border-t border-white/5">
+                      <span className="text-[10px] text-gray-500 uppercase block mb-2">In Scene</span>
+                      <div className="space-y-1">
+                        {scene.characters.map((char) => (
+                          <button
+                            key={char.id}
+                            onClick={() => setSelectedCharacterId(char.id)}
+                            className={`w-full p-2 rounded-lg text-left flex items-center gap-2 transition-all ${char.id === selectedCharacterId ? 'bg-purple-500/20 ring-1 ring-purple-500/50' : 'bg-white/5 hover:bg-white/10'}`}
+                          >
+                            <div className="w-5 h-5 rounded-full" style={{ backgroundColor: getCharacterRig(char.rigId)?.colors.primary || '#888' }} />
+                            <span className="text-xs text-white">{char.name}</span>
+                            <span className="text-[10px] text-gray-500 ml-auto">{char.animation}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'scene' && (
+                <div className="space-y-3">
+                  {/* Background */}
+                  <div>
+                    <span className="text-[10px] text-gray-500 uppercase block mb-2">Background</span>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      {Object.entries(BACKGROUNDS).slice(0, 8).map(([id, bg]) => (
+                        <button
+                          key={id}
+                          onClick={() => onSceneUpdate({ ...scene, background: id })}
+                          className={`p-2 rounded-lg transition-all ${scene.background === id ? 'ring-2 ring-purple-500' : 'hover:ring-1 hover:ring-white/20'}`}
+                        >
+                          <div className="w-full h-8 rounded mb-1" style={{ background: bg.gradient }} />
+                          <div className="text-[10px] text-gray-400 capitalize">{id}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Narration */}
+                  <div className="pt-3 border-t border-white/5">
+                    <span className="text-[10px] text-gray-500 uppercase block mb-2">Narration</span>
+                    <textarea
+                      value={scene.narration}
+                      onChange={(e) => onSceneUpdate({ ...scene, narration: e.target.value })}
+                      className="w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-xs resize-none focus:outline-none focus:ring-1 focus:ring-purple-500"
+                      rows={3}
+                      placeholder="Enter narration..."
+                    />
+                    <button onClick={speakNarration} className="mt-2 w-full px-3 py-1.5 bg-white/5 hover:bg-white/10 text-gray-300 text-xs rounded-lg flex items-center justify-center gap-1.5 transition-all">
+                      <Volume2 className="w-3.5 h-3.5" />
+                      Preview
                     </button>
-                  ))}
+                  </div>
+
+                  {/* Duration */}
+                  <div className="pt-3 border-t border-white/5">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[10px] text-gray-500 uppercase">Duration</span>
+                      <span className="text-xs text-white font-mono">{(scene.duration / 1000).toFixed(1)}s</span>
+                    </div>
+                    <input type="range" min={2000} max={15000} step={500} value={scene.duration} onChange={(e) => onSceneUpdate({ ...scene, duration: Number(e.target.value) })} className="w-full accent-purple-500 h-1" />
+                  </div>
                 </div>
-              </div>
-              
-              {/* Current narration info */}
-              <div className="p-3 bg-gray-800 rounded-xl">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-white text-sm">Scene Narration</span>
-                  <span className="text-green-400 text-xs">{audioTracks.filter(t => t.type === 'narration').length} track(s)</span>
+              )}
+
+              {activeTab === 'camera' && (
+                <div className="space-y-3">
+                  {/* Zoom */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[10px] text-gray-500 uppercase">Zoom</span>
+                      <span className="text-xs text-white font-mono">{((scene.cameraZoom ?? 1) * 100).toFixed(0)}%</span>
+                    </div>
+                    <input type="range" min={0.5} max={2.5} step={0.1} value={scene.cameraZoom ?? 1} onChange={(e) => onSceneUpdate({ ...scene, cameraZoom: Number(e.target.value) })} className="w-full accent-purple-500 h-1" />
+                  </div>
+
+                  {/* Pan */}
+                  <div className="pt-3 border-t border-white/5">
+                    <span className="text-[10px] text-gray-500 uppercase block mb-2">Pan Position</span>
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-gray-600 w-4">X</span>
+                        <input type="range" min={-50} max={50} value={scene.cameraPanX ?? 0} onChange={(e) => onSceneUpdate({ ...scene, cameraPanX: Number(e.target.value) })} className="flex-1 accent-purple-500 h-1" />
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-gray-600 w-4">Y</span>
+                        <input type="range" min={-50} max={50} value={scene.cameraPanY ?? 0} onChange={(e) => onSceneUpdate({ ...scene, cameraPanY: Number(e.target.value) })} className="flex-1 accent-purple-500 h-1" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Presets */}
+                  <div className="pt-3 border-t border-white/5">
+                    <span className="text-[10px] text-gray-500 uppercase block mb-2">Shot Presets</span>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      {[
+                        { label: 'Wide', zoom: 1, x: 0, y: 0 },
+                        { label: 'Medium', zoom: 1.3, x: 0, y: -10 },
+                        { label: 'Close-up', zoom: 1.8, x: 0, y: -20 },
+                        { label: 'Extreme', zoom: 2.2, x: 0, y: -25 },
+                      ].map((preset) => (
+                        <button
+                          key={preset.label}
+                          onClick={() => onSceneUpdate({ ...scene, cameraZoom: preset.zoom, cameraPanX: preset.x, cameraPanY: preset.y })}
+                          className="px-3 py-2 bg-white/5 hover:bg-white/10 rounded-lg text-xs text-gray-300 transition-all"
+                        >
+                          {preset.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-                <div className="text-gray-400 text-xs truncate">{scene.narration || 'No narration'}</div>
-              </div>
+              )}
+
+              {activeTab === 'timing' && (
+                <div className="space-y-3">
+                  <div className="text-center py-6">
+                    <div className="text-3xl font-bold text-white mb-1">{(scene.duration / 1000).toFixed(1)}s</div>
+                    <div className="text-xs text-gray-500">Scene Duration</div>
+                  </div>
+                  <input type="range" min={2000} max={15000} step={500} value={scene.duration} onChange={(e) => onSceneUpdate({ ...scene, duration: Number(e.target.value) })} className="w-full accent-purple-500" />
+                  
+                  <div className="pt-3 border-t border-white/5">
+                    <span className="text-[10px] text-gray-500 uppercase block mb-2">Quick Durations</span>
+                    <div className="grid grid-cols-4 gap-1">
+                      {[3, 5, 7, 10].map((sec) => (
+                        <button key={sec} onClick={() => onSceneUpdate({ ...scene, duration: sec * 1000 })} className={`py-2 rounded-lg text-xs transition-all ${scene.duration === sec * 1000 ? 'bg-purple-500 text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}>
+                          {sec}s
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'audio' && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] text-gray-500 uppercase">Narration</span>
+                    <button onClick={() => setIsMuted(!isMuted)} className={`p-1.5 rounded transition-all ${isMuted ? 'bg-red-500/20 text-red-400' : 'bg-white/5 text-gray-400'}`}>
+                      {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5" />}
+                    </button>
+                  </div>
+                  <div className="p-3 bg-white/5 rounded-lg">
+                    <div className="text-xs text-gray-300 line-clamp-2">{scene.narration || 'No narration'}</div>
+                  </div>
+                  <button onClick={speakNarration} className="w-full px-3 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-medium rounded-lg flex items-center justify-center gap-1.5 transition-all">
+                    <Play className="w-3.5 h-3.5" />
+                    Play Narration
+                  </button>
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </div>
 
@@ -1404,93 +787,43 @@ export default function InteractiveSceneEditor({
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-gray-900 rounded-2xl max-w-4xl w-full max-h-[80vh] overflow-hidden"
+              className="bg-[#12121a] rounded-2xl max-w-3xl w-full max-h-[70vh] overflow-hidden ring-1 ring-white/10"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="p-4 border-b border-gray-700 flex items-center justify-between">
-                <h2 className="text-white text-lg font-bold flex items-center gap-2">
-                  <LayoutTemplate className="w-5 h-5" />
-                  Scene Templates
-                </h2>
-                <button
-                  onClick={() => setShowTemplateModal(false)}
-                  className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
-                >
-                  <X className="w-5 h-5 text-gray-400" />
+              <div className="p-4 border-b border-white/5 flex items-center justify-between">
+                <span className="text-white font-medium">Scene Templates</span>
+                <button onClick={() => setShowTemplateModal(false)} className="p-1.5 hover:bg-white/5 rounded-lg transition-all">
+                  <X className="w-4 h-4 text-gray-400" />
                 </button>
               </div>
-              
-              <div className="p-4 overflow-y-auto max-h-[calc(80vh-80px)]">
-                {/* Template Categories */}
-                {(['dialogue', 'action', 'emotion', 'transition', 'establishing'] as const).map((category) => {
-                  const categoryTemplates = SCENE_TEMPLATES.filter(t => t.category === category);
-                  if (categoryTemplates.length === 0) return null;
-                  
-                  return (
-                    <div key={category} className="mb-6">
-                      <h3 className="text-white font-medium mb-3 capitalize flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full" style={{
-                          backgroundColor: {
-                            dialogue: '#3B82F6',
-                            action: '#EF4444',
-                            emotion: '#F59E0B',
-                            transition: '#8B5CF6',
-                            establishing: '#10B981',
-                          }[category]
-                        }} />
-                        {category} Scenes
-                      </h3>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                        {categoryTemplates.map((template) => (
-                          <button
-                            key={template.id}
-                            onClick={() => {
-                              // Apply template positions to current scene characters
-                              const updatedScene: EditableScene = {
-                                ...scene,
-                                background: template.background,
-                                duration: template.suggestedDuration,
-                                characters: scene.characters.map((char, i) => {
-                                  const pos = template.characterPositions[i];
-                                  if (pos) {
-                                    return {
-                                      ...char,
-                                      x: pos.x,
-                                      y: pos.y,
-                                      scale: pos.scale,
-                                      flipX: pos.flipX,
-                                      animation: pos.animation,
-                                      expression: pos.expression as any,
-                                    };
-                                  }
-                                  return char;
-                                }),
-                              };
-                              
-                              updateSceneWithHistory(updatedScene, EDIT_ACTIONS.APPLY_TEMPLATE, { template: template.name });
-                              setShowTemplateModal(false);
-                            }}
-                            className="p-4 bg-gray-800 hover:bg-gray-700 rounded-xl text-left transition-all hover:ring-2 hover:ring-purple-500"
-                          >
-                            <div className="text-2xl mb-2">
-                              {category === 'dialogue' ? '💬' : category === 'action' ? '🏃' : category === 'emotion' ? '😊' : category === 'transition' ? '🎬' : '🏞️'}
-                            </div>
-                            <div className="text-white font-medium text-sm">{template.name}</div>
-                            <div className="text-gray-400 text-xs mt-1">{template.description}</div>
-                            <div className="flex items-center gap-2 mt-2">
-                              <span className="px-2 py-0.5 bg-gray-700 rounded text-[10px] text-gray-300">
-                                {template.characterPositions.length} char
-                              </span>
-                              <span className="px-2 py-0.5 bg-gray-700 rounded text-[10px] text-gray-300 capitalize">
-                                {template.background}
-                              </span>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="p-4 overflow-y-auto max-h-[calc(70vh-60px)]">
+                <div className="grid grid-cols-3 gap-3">
+                  {SCENE_TEMPLATES.map((template) => (
+                    <button
+                      key={template.id}
+                      onClick={() => {
+                        const updatedScene: EditableScene = {
+                          ...scene,
+                          background: template.background,
+                          duration: template.suggestedDuration,
+                          characters: scene.characters.map((char, i) => {
+                            const pos = template.characterPositions[i];
+                            if (pos) {
+                              return { ...char, x: pos.x, y: pos.y, scale: pos.scale, flipX: pos.flipX, animation: pos.animation, expression: pos.expression as any };
+                            }
+                            return char;
+                          }),
+                        };
+                        updateSceneWithHistory(updatedScene, EDIT_ACTIONS.APPLY_TEMPLATE, { template: template.name });
+                        setShowTemplateModal(false);
+                      }}
+                      className="p-3 bg-white/5 hover:bg-white/10 rounded-xl text-left transition-all"
+                    >
+                      <div className="text-white text-sm font-medium mb-1">{template.name}</div>
+                      <div className="text-gray-500 text-[10px]">{template.description}</div>
+                    </button>
+                  ))}
+                </div>
               </div>
             </motion.div>
           </motion.div>
@@ -1499,3 +832,4 @@ export default function InteractiveSceneEditor({
     </motion.div>
   );
 }
+
