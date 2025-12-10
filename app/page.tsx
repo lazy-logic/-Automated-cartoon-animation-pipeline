@@ -1316,7 +1316,7 @@ export default function HomePage() {
                       )}
 
                       {/* Characters - positioned on the ground */}
-                      <div className="absolute bottom-[8%] left-0 right-0 flex items-end justify-center gap-6 z-30">
+                      <div className="absolute bottom-[12%] left-0 right-0 flex items-end justify-center gap-6 z-30">
                         {currentScene.characters.map((char, idx) => {
                           const rig = getCharacterRig(char.rigId);
                           const label = characterRoleLabels[rig?.id.toLowerCase() || ''];

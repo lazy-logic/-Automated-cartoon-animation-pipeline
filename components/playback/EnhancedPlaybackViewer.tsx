@@ -648,12 +648,8 @@ export default function EnhancedPlaybackViewer({
   const isEnded = !isPlaying && safeSceneIndex === scenes.length - 1 && sceneProgress >= currentScene.duration - 100;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      className="fixed inset-0 bg-black z-50 flex flex-col"
-    >
+    <div className="fixed inset-0 bg-black z-50 flex flex-col">
+
       {/* Top Bar */}
       <div className="absolute top-0 left-0 right-0 z-20 p-4 flex items-center justify-between bg-gradient-to-b from-black/60 to-transparent">
         <div className="flex items-center gap-4">
@@ -905,33 +901,30 @@ export default function EnhancedPlaybackViewer({
         )}
       </AnimatePresence>
 
-      {/* Scene Transition Overlay */}
+      {/* Scene Transition Overlay - Using simple fade */}
       <SceneTransition
-        type={transitionType}
+        type="fade"
         isTransitioning={isTransitioning}
-        duration={sceneIntensity === 'calm' ? 800 : sceneIntensity === 'intense' ? 400 : 600}
+        duration={300}
       />
 
       {/* Main Stage */}
-      <div className="flex-1 flex items-center justify-center p-4">
-        <motion.div
-          className="relative w-full max-w-5xl aspect-video rounded-2xl overflow-hidden shadow-2xl"
-          style={{
-            ...cameraStateToCSS(cameraState, cameraTime),
-          }}
+      <div className="flex-1 flex items-center justify-center p-8">
+        <div
+          className="relative w-full max-w-3xl aspect-video rounded-2xl overflow-hidden shadow-2xl"
         >
           {/* Base Background - Always render a solid gradient first */}
           <div 
             className="absolute inset-0 z-0"
             style={{
-              background: bgConfig.gradient,
+              background: bgConfig?.gradient || DEFAULT_BACKGROUND.gradient,
             }}
           />
           
           {/* Custom AI Background Image Overlay */}
           {customBgUrl && (
             <div 
-              className="absolute inset-0 z-1"
+              className="absolute inset-0 z-[1]"
               style={{
                 backgroundImage: `url(${customBgUrl})`,
                 backgroundSize: 'cover',
@@ -940,15 +933,15 @@ export default function EnhancedPlaybackViewer({
             />
           )}
           
-          {/* Parallax Background (only show if no custom background) */}
-          {!customBgUrl && (
+          {/* Parallax Background (only show if no custom background and valid theme) */}
+          {!customBgUrl && currentScene?.background && BACKGROUNDS[currentScene.background] && (
             <ParallaxBackground
               theme={currentScene.background as any}
               season="summer"
               timeOfDay={currentScene.background === 'night' ? 'night' : 'day'}
               animationProgress={sceneProgress / currentScene.duration}
               enableParallax={true}
-              className="absolute inset-0 z-1"
+              className="absolute inset-0 z-[1]"
             />
           )}
 
@@ -985,85 +978,38 @@ export default function EnhancedPlaybackViewer({
             </div>
           )}
 
-          {/* Characters */}
-          <AnimatePresence mode="sync">
-            <motion.div
-              key={`chars-${safeSceneIndex}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              className="absolute inset-0"
-            >
-              {currentScene.characters.map((char, idx) => {
-                const rig = getCharacterRig(char.rigId);
-                if (!rig) return null;
+          {/* Characters - positioned on the ground */}
+          <div className="absolute inset-x-0 bottom-0 h-[30%] flex items-end justify-center gap-8 pb-4 z-10">
+            {currentScene.characters.map((char) => {
+              const rig = getCharacterRig(char.rigId);
+              if (!rig) return null;
 
-                const isTalking = char.id === talkingCharacterId;
-                const mouthShape = characterMouthShapes[char.id];
-                
-                // Get squash-stretch values (ToonCrafter inspired)
-                const squashStretch = smoothAnimationEnabled 
-                  ? characterSquash[char.id] || { squash: 1, stretch: 1 }
-                  : { squash: 1, stretch: 1 };
+              const isTalking = char.id === talkingCharacterId;
 
-                const label = characterRoleLabels
-                  ? characterRoleLabels[rig.id.toLowerCase()] || undefined
-                  : undefined;
+              const label = characterRoleLabels
+                ? characterRoleLabels[rig.id.toLowerCase()] || undefined
+                : undefined;
 
-                return (
-                  <motion.div
-                    key={char.id}
-                    initial={{
-                      x: char.flipX ? 100 : -100,
-                      opacity: 0,
-                    }}
-                    animate={{
-                      x: 0,
-                      opacity: 1,
-                    }}
-                    transition={{
-                      duration: 0.6,
-                      delay: idx * 0.15,
-                      type: 'spring',
-                      stiffness: 100,
-                    }}
-                    className="absolute"
-                    style={{
-                      left: `${char.x}%`,
-                      top: `${char.y}%`,
-                      transform: 'translate(-50%, -100%)',
-                      zIndex: char.zIndex + 10,
-                    }}
-                  >
-                    {/* Squash-stretch wrapper (ToonCrafter inspired) */}
-                    <div
-                      style={{
-                        transform: `scaleX(${squashStretch.stretch}) scaleY(${squashStretch.squash})`,
-                        transformOrigin: 'bottom center',
-                        transition: 'transform 0.05s ease-out',
-                      }}
-                    >
-                      <RiggedCharacter
-                        rig={rig}
-                        animation={isTalking ? 'talk' : char.animation}
-                        scale={char.scale * 0.8}
-                        flipX={char.flipX}
-                        expression={char.expression}
-                        isTalking={isTalking}
-                        showName={!!label}
-                        label={label}
-                        showExplorerGear={char.outfitExplorer}
-                        showBallProp={char.propBall}
-                        customColors={char.customColors}
-                        customAccessories={char.customAccessories}
-                      />
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </motion.div>
-          </AnimatePresence>
+              return (
+                <div key={char.id} className="flex-shrink-0">
+                  <RiggedCharacter
+                    rig={rig}
+                    animation={isTalking ? 'talk' : char.animation}
+                    scale={char.scale * 0.7}
+                    flipX={char.flipX}
+                    expression={char.expression || 'happy'}
+                    isTalking={isTalking}
+                    showName={!!label}
+                    label={label}
+                    showExplorerGear={char.outfitExplorer}
+                    showBallProp={char.propBall}
+                    customColors={char.customColors}
+                    customAccessories={char.customAccessories}
+                  />
+                </div>
+              );
+            })}
+          </div>
 
           {/* Scene Title */}
           <AnimatePresence>
@@ -1079,7 +1025,7 @@ export default function EnhancedPlaybackViewer({
             )}
           </AnimatePresence>
 
-        </motion.div>
+        </div>
       </div>
 
       {/* Minimal Controls */}
@@ -1151,7 +1097,7 @@ export default function EnhancedPlaybackViewer({
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </div>
   );
 }
 
